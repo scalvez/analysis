@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
 
   if (generate_pseudo) {
 
-    gSystem->Exec("rm ../pseudo/*_pseudo.root");
+    gSystem->Exec("rm ../data/pseudo/*_pseudo.root");
 
     std::cout << " Pseudo experiments generation " << std::endl;
     // unsigned int number_of_pseudo_experiments = 100;

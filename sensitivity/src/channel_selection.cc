@@ -34,8 +34,8 @@ void channel_selection(TString isotope, std::vector<TString> quantities_pdf, boo
   // const TCut good_internal_probability_cut = prob_cut;
   // const TCut beta_beta_like_cut = prob_cut;
 
-  TString input_file = "../trees/" + isotope + "_tree.root";
-  TString output_file = "../pdf/" + isotope + "_pdf.root";
+  TString input_file = "../data/trees/" + isotope + "/merge.root";
+  TString output_file = "../data/pdf/" + isotope + "_pdf.root";
 
   TFile *f = TFile::Open(input_file);
   TTree *tree = (TTree*)f->Get("snemodata");
@@ -48,6 +48,7 @@ void channel_selection(TString isotope, std::vector<TString> quantities_pdf, boo
 
     int nbins;
     double xmin, xmax;
+    //default values
     nbins = 100;
     xmin = 0;
     xmax = 5;
@@ -58,24 +59,25 @@ void channel_selection(TString isotope, std::vector<TString> quantities_pdf, boo
 
     TH1F* h = new TH1F(qty,qty,nbins,xmin,xmax);
 
-    //Remove un-initialized events (MC sim before May 26th 16)
-    //this, or concatenate char and convert to string
-    if(qty.Contains("2e1g")) {
-      TCut cut = "2e1g_electrons_gammas_energy_sum != 0";
-      tree->Project(qty,qty,cut);
-    }
-    else if(qty.Contains("2e2g")) {
-      TCut cut = "2e2g_electrons_gammas_energy_sum != 0";
-      tree->Project(qty,qty,cut);
-    }
-    else if(qty.Contains("2e3g")) {
-      TCut cut = "2e3g_electrons_gammas_energy_sum != 0";
-      tree->Project(qty,qty,cut);
-    }
-    else
-      tree->Project(qty,qty);
+    // //Remove un-initialized events (MC sim before May 26th 16)
+    // //this, or concatenate char and convert to string
+    // if(qty.Contains("2e1g")) {
+    //   TCut cut = "2e1g_electrons_gammas_energy_sum != 0";
+    //   tree->Project(qty,qty,cut);
+    // }
+    // else if(qty.Contains("2e2g")) {
+    //   TCut cut = "2e2g_electrons_gammas_energy_sum != 0";
+    //   tree->Project(qty,qty,cut);
+    // }
+    // else if(qty.Contains("2e3g")) {
+    //   TCut cut = "2e3g_electrons_gammas_energy_sum != 0";
+    //   tree->Project(qty,qty,cut);
+    // }
+    // else
+    //   tree->Project(qty,qty);
 
-    // tree->Project(qty,qty);
+    //Projected into h via its name
+    tree->Project(qty,qty);
 
     // h->ClearUnderflowAndOverflow(); Unavailable with this version of ROOT
     h->SetBinContent(0,0);
