@@ -20,7 +20,7 @@ LIM_SRC := ${COLLIESYS}/limit/src/
 MIN_INC := ${COLLIESYS}/minuit/include/
 MIN_SRC := ${COLLIESYS}/minuit/src/
 MIN_LIB := ${COLLIESYS}/minuit/lib/
-CLHEP_INC  := ${COLLIESYS}/CLHEP/Random/
+CLHEP_INC  := ${COLLIESYS}
 CLHEP_SRC  := ${COLLIESYS}/CLHEP/src
 CLHEP_LIB  := ${COLLIESYS}/CLHEP/lib
 COLLIELIB := ${COLLIESYS}/lib/
@@ -142,10 +142,13 @@ IOHEADERS += ${IO_INC}/InfoForEfficiencyCalculation.hh
 ALLSRCS := ${LIMITSRCS} ${IOSRCS}
 ALLOBJS :=$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,${ALLSRCS})))
 
-all: collie_io.exe
+all: collie_io.exe limit_calc.exe
 
 collie_io.exe: collie_io.o
 	gcc -o $@ $^ ${CXXFLAGS} ${LDFLAGS} ${LOADLIBS} ${EXAMPLELIBS} ${SEARCHDIRS} ${ROOTLIBS}
+
+limit_calc.exe: limit_calc.o
+	gcc -o $@ $^ ${CXXFLAGS} ${LDFLAGS} ${LOADLIBS} ${EXAMPLELIBS} ${SEARCHDIRS} ${ROOTLIBS} -lCollieCLHEP
 
 tidy::
 	@${RM} core *.o *.exe
