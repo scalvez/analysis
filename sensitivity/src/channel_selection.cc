@@ -76,8 +76,11 @@ void channel_selection(TString isotope, std::vector<TString> quantities_pdf, boo
     // else
     //   tree->Project(qty,qty);
 
-    //Projected into h via its name
+    //No cuts, projected into h via its name
     tree->Project(qty,qty);
+
+    // TCut cut = "2e_electrons_vertex_location == 0:2e_electrons_vertex_location == 0";
+    TCut cut = "2e_vertices_distance_y <= 0";
 
     // h->ClearUnderflowAndOverflow(); Unavailable with this version of ROOT
     h->SetBinContent(0,0);
@@ -90,6 +93,9 @@ void channel_selection(TString isotope, std::vector<TString> quantities_pdf, boo
 
     TString isotope_quantity = isotope + "_" + qty;
     // std::cout << "inserting " << isotope_quantity  <<  "  " <<  h->Integral(1,h->GetXaxis()->GetNbins())/isotope_mc_size << std::endl;
+    if(isotope.Contains("2nu"))
+      quantity_efficiency.insert(std::pair<TString,double>(isotope_quantity,h->Integral(1,h->GetXaxis()->GetNbins())/isotope_mc_size/25.));
+    else
     quantity_efficiency.insert(std::pair<TString,double>(isotope_quantity,h->Integral(1,h->GetXaxis()->GetNbins())/isotope_mc_size));
 
     if(normalize)

@@ -11,8 +11,8 @@ const bool generate_pdf = true;
 const bool generate_pseudo = true;
 const bool poisson_pseudo = false;
 const unsigned int number_of_pseudo_experiments = 1;
-const bool fit = true;
-const bool print_fits = true;
+const bool fit = false;
+const bool print_fits = false;
 
 // const double bi214_channel_1e1a_efficiency = 10733./2500000;
 
@@ -36,11 +36,15 @@ const bool print_fits = true;
 // const TCut good_internal_probability_cut = prob_cut;
 
 const std::map < std::string, double > isotope_activity = {
-  {"2nu",9},
-  {"bi214",10e-6},
-  {"radon",150e-6},
-  {"tl208",2e-6}
+  {"0nu",0}
 };
+
+// const std::map < std::string, double > isotope_activity = {
+//   {"2nu",9},
+//   {"bi214",10e-6},
+//   {"radon",150e-6},
+//   {"tl208",2e-6}
+// };
 
 // const std::map < std::string, double > isotope_activity = {
 //   {"2nu",9},
@@ -57,26 +61,34 @@ const std::map < std::string, double > isotope_activity = {
 //   "1e1a_electron_alpha_vertices_probability",
 // };
 
+//limit study
+const std::vector <TString> quantities = {
+  "2e_electrons_energy_sum",
+};
+
+
 // // 2nu
 // const std::vector <TString> quantities = {
 //   "1e_electron_energy",
 //   "2e_electron_maximal_energy",
 //   "2e_electrons_energy_sum",
 //   "2e_electrons_internal_probability",
+//   "2e_electrons_vertices_distance_y",
+//   "2e_electrons_vertices_distance_z",
 //   "2e_electrons_cos_angle",
 //   //maybe "2e_electrons_vertices_probability",
 // };
 
-// tl and bi
-const std::vector <TString> quantities = {
-  // "1e_electron_energy",
-  "1e1g_gamma_energy",
-  "1e1g_electron_gamma_energy_sum",
-  "1e2g_gamma_max_energy",
-  "1e2g_electron_gammas_energy_sum",
-  "1e3g_electron_gammas_energy_sum",
-  // "2e1g_electrons_gammas_energy_sum"
-};
+// // tl and bi
+// const std::vector <TString> quantities = {
+//   // "1e_electron_energy",
+//   "1e1g_gamma_energy",
+//   "1e1g_electron_gamma_energy_sum",
+//   "1e2g_gamma_max_energy",
+//   "1e2g_electron_gammas_energy_sum",
+//   "1e3g_electron_gammas_energy_sum",
+//   // "2e1g_electrons_gammas_energy_sum"
+// };
 
 void get_histogram_options(TString quantity, int & nbins, double & xmin, double & xmax);
 

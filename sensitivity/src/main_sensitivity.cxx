@@ -22,6 +22,7 @@ int main(int argc, char* argv[]) {
 
   double seed = atof(argv[1]);
 
+  std::vector <double> se_0nu_measurements;
   std::vector <double> se_2nu_measurements;
   std::vector <double> tl_measurements;
   std::vector <double> bi_measurements;
@@ -58,7 +59,7 @@ int main(int argc, char* argv[]) {
         const double & a_activity = i->second;
         pseudo_generator(a_isotope,quantities,a_activity,seed);
       }
-      gSystem->Exec("hadd -f ../pseudo/pseudo.root ../pseudo/*_pseudo.root");
+      gSystem->Exec("hadd -f ../data/pseudo/pseudo.root ../data/pseudo/*_pseudo.root");
       if(fit) {
         multi_fit(activity_measurement);
         std::cout << " - Reconstructed activities - " << std::endl;
@@ -68,6 +69,8 @@ int main(int argc, char* argv[]) {
           std::cout << " Isotope : " << isotope << std::endl;
           std::cout << " Activity : " << activity * 1e6  << " uBq/kg " << std::endl;
 
+          if(isotope == "0nu")
+            se_0nu_measurements.push_back(activity);
           if(isotope == "2nu")
             se_2nu_measurements.push_back(activity);
           if(isotope == "tl208")

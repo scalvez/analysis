@@ -41,8 +41,10 @@ void get_histogram_options(TString quantity, int & nbins, double & xmin, double 
 
 // TODO: to move in the analysis config and get MC dataset size from conf
 int get_isotope_mc_size(TString isotope) {
-  if(isotope.Contains("2nu"))
-    return 1e8;
+  if(isotope.Contains("0nu"))
+    return 1e6;
+  else if(isotope.Contains("2nu"))
+    return 1e6;
   else if(isotope.Contains("tl208"))
     return 1e8;
   else if(isotope.Contains("bi214"))

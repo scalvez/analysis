@@ -17,8 +17,8 @@ void pseudo_generator(TString isotope, std::vector<TString> quantities, double a
 
   std::cout << " ---- Isotope : " << isotope << std::endl;
 
-  TString input_file = "../pdf/" + isotope + "_pdf.root";
-  TString output_file = "../pseudo/" + isotope + "_pseudo.root";
+  TString input_file = "../data/pdf/" + isotope + "_pdf.root";
+  TString output_file = "../data/pseudo/" + isotope + "_pseudo.root";
 
   TFile *f = TFile::Open(input_file);
   TFile *f_output= new TFile(output_file, "RECREATE");
