@@ -90,8 +90,8 @@ void calcLimit(TString outFile, TString inList, TString m){
   // The CLsyst computation applies all systematics via Gaussian distribution
   //  CLsyst clcompute;
 
-  // Use CLfit2 for profileLH fitting of systematics-smeared distributions using two fits per pseudoexperiement
-   // CLfit2 clcompute;
+  // // Use CLfit2 for profileLH fitting of systematics-smeared distributions using two fits per pseudoexperiement
+  //  CLfit2 clcompute;
 
   //Use CLfit for profileLH fitting of systematics-smeared distributions using just one fit per pseudoexperiment
   //  CLfit clcompute;
@@ -106,17 +106,18 @@ void calcLimit(TString outFile, TString inList, TString m){
   **/
 
 
-  //  clcompute->setNoviceFlag(false);  // deactivate novice flag if you want to use stat uncertainties
-  //  clcompute->useHistoStats(false);  // statistics is turned off by default, only has meaning for CLsyst, CLfit, CLfit2
+   clcompute.setNoviceFlag(false);  // deactivate novice flag if you want to use stat uncertainties
+   clcompute.useHistoStats(true);  // statistics is turned off by default, only has meaning for CLsyst, CLfit, CLfit2
 
 
   /// This is the class for computing cross section limits
   CrossSectionLimit csLim;
   csLim.setup(&clcompute);
-  csLim.setVerbose(false);
+  csLim.setVerbose(true);
 
   //95% CL is the default value
-  csLim.setCLlevel(0.95);
+  // csLim.setCLlevel(0.95);
+  csLim.setCLlevel(0.68);
 
   //The range of CL values that will satisfy the algorithm: -0.001 < (CL-0.95) < 0.001
   csLim.setAccuracy(0.001);
@@ -129,7 +130,7 @@ void calcLimit(TString outFile, TString inList, TString m){
   csLim.calculateObserved(true);
 
   //Calculate the expected limit in the case of -2,-1,0,1, or 2-sigma variations of the data relative to bkgd
-  csLim.setNSigma(1);
+  csLim.setNSigma(0);
 
   //Start the cross section limit search at a cross section of 1.0 times the nominal input value
   //  Use this to shorten your calculation if you know roughly where the limit will be.
@@ -162,8 +163,8 @@ void calcLimit(TString outFile, TString inList, TString m){
 
   //loop over all masspoints and perform calculations
   for (int i=0; i<len; i++) {
-    // if(v1[i]==mass || mass==-1){
-    if(1){
+    if(v1[i]==mass || mass==-1){
+    // if(1){
       //tell the container what point you're working on
       clresults.reset(v1[i],v2[i],v3[i]);
 
@@ -182,9 +183,9 @@ void calcLimit(TString outFile, TString inList, TString m){
 
       printf("Sig: %f, Bkgd: %f, Data: %f\n",sbd->totSignal(),sbd->totBkgd(),sbd->totData());
 
-      //If you wish to run the fit test, uncomment the next two lines
-      //      fitTest.runTest(sbd,1e6);
-      //      continue;
+      // //If you wish to run the fit test, uncomment the next two lines
+      // fitTest.runTest(sbd,1e6);
+      // continue;
 
       //calculate CLs
       clcompute.calculateCLs(*sbd,clresults,CLcompute::LEVEL_VERYFAST);

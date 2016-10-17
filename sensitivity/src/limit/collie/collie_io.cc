@@ -8,12 +8,12 @@ int main(int argc, char* argv[]) {
   /////////////////////////////////////////
   CollieIOFile* cfile = new CollieIOFile();
   // Specify outputfile and channel name
-  cfile->initFile("exampleCollieIOfile.root", "My Channel");
+  cfile->initFile("io_file.root", "0nu");
 
   // Define your input histograms
   double Xmin = 0.0;
-  double Xmax = 100.0;
-  int Nbins = 50;
+  double Xmax = 5000.0;
+  int Nbins = 100;
   //
 
   cfile->setInputHist(Xmin,Xmax,Nbins);
@@ -30,51 +30,32 @@ int main(int argc, char* argv[]) {
 
   //Define backgrounds
   vector<string> bkgdNames;
-  bkgdNames.push_back("Bkgd1");
+  bkgdNames.push_back("2nu");
   cfile->createChannel(bkgdNames);
 
+  TFile infile_sig("$SW_WORK_DIR/analysis/sensitivity/data/pdf/0nu_pdf.root");
+  TH1D* sig = (TH1D*)infile_sig.Get("2e_electrons_energy_sum");
 
-  // For this example, generate backgrounds, signal, data, and systematics
-  TH1D* bkgd1 = new TH1D("bkgd1","bkgd1",Nbins,Xmin,Xmax);
+  TFile infile_bkg("$SW_WORK_DIR/analysis/sensitivity/data/pdf/2nu_pdf.root");
+  TH1D* bkgd1 = (TH1D*)infile_bkg.Get("2e_electrons_energy_sum");
 
-  TH1D* sig = new TH1D("sig","sig",Nbins,Xmin,Xmax);
-  TH1D* data = new TH1D("data","data",Nbins,Xmin,Xmax);
+  TFile infile_data("$SW_WORK_DIR/analysis/sensitivity/data/pseudo/2nu_pseudo.root");
+  TH1D* data = (TH1D*)infile_data.Get("2e_electrons_energy_sum");
 
   // Make sure you keep track of statistical uncertainties in histograms correctly
   bkgd1->Sumw2();
   sig->Sumw2();
   data->Sumw2();
 
-
-  //Otherwise, get your input histograms from an external file
-  //
-  //  TFile infile("myInputFile.root");
-  //  TH1D* data = (TH1D*)infile.Get("data");
-  //  TH1D* signal = (TH1D*)infile.Get("signal");
-  //  TH1D* bkgd1 = (TH1D*)infile.Get("bkgd1");
-
   TRandom r(1234);
   double niter = 5e5;
 
   //We'll make three mass points...
-  for(int m=75; m<=125; m+=1){
-  // for(int m=100; m<=100; m+=25){
+  // for(int m=0; m<=10; m+=1){
+  for(int m=0; m<=0; m+=1){
 
-    bkgd1->Scale(0);
-    sig->Scale(0);
-    data->Scale(0);
-
-    // For this example, randomly fill histograms
-    for(int i=0; i<niter; i++){
-      //Flat background
-      bkgd1->Fill(r.Rndm()*100,1000.0/niter);
-
-      //Fill data with 5% higher bkgd1 rate
-      data->Fill(r.Rndm()*100, 1000.0/niter);
-
-      //Peaked signal
-      sig->Fill(r.Gaus(50,2),100/niter);
-    }
+    bkgd1->Scale(7657);
+    sig->Scale(1);
 
     //Backgrounds are passed in via vector
     vector<TH1D*> vbkgd;
@@ -113,9 +94,11 @@ int main(int argc, char* argv[]) {
     //   if by shape, must supply a histogram of the values in percent(%) fluctuations...
     //   Signal requires no index, but backgrounds must be specifically indexed (0->N bkgds)
     //   Read the instructions in collie/io/include/CollieIOFile.hh if you're in doubt
-    cfile->createFlatSigSystematic("Lumi",0.1,0.1,m);
+    // cfile->createFlatSigSystematic("Lumi",0.01,0.01,m);
+    cfile->createFlatSigSystematic("Eff",0.01,0.01,m);
 
-    cfile->createFlatBkgdSystematic(0,"Lumi",0.1,0.1,m);
+    // cfile->createFlatBkgdSystematic(0,"Lumi",0.01,0.01,m);
+    cfile->createFlatBkgdSystematic(0,"Eff",0.01,0.01,m);
 
     // Example of systematics input as histograms, can be flat or function of final variable
     //==>Use this method if you're inputing fractional shape systematics
