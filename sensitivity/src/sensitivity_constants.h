@@ -12,4 +12,6 @@ const double Na = 6.022e23;
 const double M_Se = 0.082; //kg/mol more like 81.6 if we enrich at 90%
 const double const_se = log(2) * Na / M_Se; // years;
 
+const double halflife_0nu = 1e25; // years;
+
 #endif

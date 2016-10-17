@@ -29,6 +29,8 @@ void pseudo_generator(TString isotope, std::vector<TString> quantities, double a
   int n_decays = 0;
   if (isotope.Contains("2nu"))
     n_decays = int(mass*exposure_y/halflife_2nu*const_se);
+  else if (isotope.Contains("0nu"))
+    n_decays = int(mass*exposure_y/halflife_0nu*const_se);
   else if (isotope.Contains("radon"))
     n_decays = int(activity*exposure_sec*tracker_volume);
   else

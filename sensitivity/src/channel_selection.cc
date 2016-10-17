@@ -98,6 +98,8 @@ void channel_selection(TString isotope, std::vector<TString> quantities_pdf, boo
     else
     quantity_efficiency.insert(std::pair<TString,double>(isotope_quantity,h->Integral(1,h->GetXaxis()->GetNbins())/isotope_mc_size));
 
+    h->Sumw2();
+
     if(normalize)
       h->Scale(1./h->Integral(1,h->GetXaxis()->GetNbins()));
     h->Write();

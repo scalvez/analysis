@@ -36,7 +36,8 @@ const bool print_fits = false;
 // const TCut good_internal_probability_cut = prob_cut;
 
 const std::map < std::string, double > isotope_activity = {
-  {"0nu",0}
+  {"0nu",0},
+  {"2nu",9}
 };
 
 // const std::map < std::string, double > isotope_activity = {
