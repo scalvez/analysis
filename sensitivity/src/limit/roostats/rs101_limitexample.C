@@ -56,16 +56,18 @@ void rs101_limitexample()
   /////////////////////////////////////////
   // An example of setting a limit in a number counting experiment with uncertainty on background and signal
   /////////////////////////////////////////
-
   // to time the macro
   TStopwatch t;
   t.Start();
 
+  double cl = 0.90; //in %
   /////////////////////////////////////////
   // The Model building stage
   /////////////////////////////////////////
   RooWorkspace* wspace = new RooWorkspace();
-  wspace->factory("Poisson::countingModel(obs[150,0,300], sum(s[50,0,120]*ratioSigEff[1.,0,3.],b[100]*ratioBkgEff[1.,0.,3.]))"); // counting model
+  // wspace->factory("Poisson::countingModel(obs[150,0,300], sum(s[50,0,120]*ratioSigEff[1.,0,3.],b[100]*ratioBkgEff[1.,0.,3.]))"); // counting model
+  // wspace->factory("Poisson::countingModel(obs[150,0,300], sum(s[50,0,120]*ratioSigEff[1.,0,3.],b[0.1]*ratioBkgEff[1.,0.,3.]))"); // counting model
+  wspace->factory("Poisson::countingModel(obs[150,0,300], sum(s[0,0,10]*ratioSigEff[1.,0,3.],b[1]*ratioBkgEff[1.,0.,3.]))"); // counting model
   //  wspace->factory("Gaussian::sigConstraint(ratioSigEff,1,0.05)"); // 5% signal efficiency uncertainty
   //  wspace->factory("Gaussian::bkgConstraint(ratioBkgEff,1,0.1)"); // 10% background efficiency uncertainty
   wspace->factory("Gaussian::sigConstraint(gSigEff[1,0,3],ratioSigEff,0.05)"); // 5% signal efficiency uncertainty
@@ -89,7 +91,7 @@ void rs101_limitexample()
   gSigBkg->setConstant();
 
   // Create an example dataset with 160 observed events
-  obs->setVal(160.);
+  obs->setVal(1.);
   RooDataSet* data = new RooDataSet("exampleData", "exampleData", RooArgSet(*obs));
   data->add(*obs);
 
@@ -114,11 +116,11 @@ void rs101_limitexample()
   wspace->writeToFile("rs101_ws.root");
 
 
-
   // First, let's use a Calculator based on the Profile Likelihood Ratio
   //ProfileLikelihoodCalculator plc(*data, *modelWithConstraints, paramOfInterest);
   ProfileLikelihoodCalculator plc(*data, modelConfig);
-  plc.SetTestSize(.05);
+  // plc.SetTestSize(1-0.68);
+  plc.SetTestSize(1-cl);
   ConfInterval* lrint = plc.GetInterval();  // that was easy.
 
   // Let's make a plot
@@ -135,7 +137,8 @@ void rs101_limitexample()
   fc.UseAdaptiveSampling(true);
   fc.FluctuateNumDataEntries(false); // number counting analysis: dataset always has 1 entry with N events observed
   fc.SetNBins(100); // number of points to test per parameter
-  fc.SetTestSize(.05);
+  // fc.SetTestSize(.05);
+  fc.SetTestSize(1-cl);
   //  fc.SaveBeltToFile(true); // optional
   ConfInterval* fcint = NULL;
   fcint = fc.GetInterval();  // that was easy.
@@ -154,12 +157,12 @@ void rs101_limitexample()
 
   MCMCCalculator mc(*data, modelConfig);
   mc.SetNumIters(20000); // steps to propose in the chain
-  mc.SetTestSize(.05); // 95% CL
+  // mc.SetTestSize(.05); // 95% CL
+  mc.SetTestSize(1-cl); // 95% CL
   mc.SetNumBurnInSteps(40); // ignore first N steps in chain as "burn in"
   mc.SetProposalFunction(*pdfProp);
   mc.SetLeftSideTailFraction(0.5);  // find a "central" interval
   MCMCInterval* mcInt = (MCMCInterval*)mc.GetInterval();  // that was easy
-
 
   // Get Lower and Upper limits from Profile Calculator
   std::cout << "Profile lower limit on s = " << ((LikelihoodInterval*) lrint)->LowerLimit(*s) << std::endl;
