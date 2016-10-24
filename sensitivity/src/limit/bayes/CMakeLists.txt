@@ -17,11 +17,14 @@ find_package(ROOT 5.34.00 REQUIRED ${ROOT_COMPONENTS})
 include_directories(${ROOT_INCLUDE_DIRS})
 
 list(APPEND Bayes_HEADERS
+  analysis_config.h
   stats_tools.h
+  pseudo_generator.h
   )
 
 list(APPEND Bayes_SOURCES
   main_bayes.cxx
+  pseudo_generator.cc
   )
 
 # Build a dynamic library from our sources
