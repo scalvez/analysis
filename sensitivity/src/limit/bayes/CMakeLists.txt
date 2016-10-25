@@ -24,6 +24,7 @@ list(APPEND Bayes_HEADERS
 
 list(APPEND Bayes_SOURCES
   main_bayes.cxx
+  # main_bayes_example.cxx
   pseudo_generator.cc
   )
 
@@ -38,6 +39,7 @@ target_link_libraries(Bayes ${ROOT_LIBRARIES})
 install(TARGETS Bayes DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 add_executable(main_bayes main_bayes.cxx)
+# add_executable(main_bayes main_bayes_example.cxx)
 set_target_properties(main_bayes PROPERTIES COMPILE_DEFINITIONS ENABLE_BINRELOC)
 target_link_libraries(main_bayes Bayes)
 set_target_properties(main_bayes PROPERTIES INSTALL_RPATH_USE_LINK_PATH 1)
