@@ -8,6 +8,9 @@
 
 void pseudo_generator(TH1 * h_pdf, TH1 * h_pseudo, int n_events, double seed) {
 
+  if(n_events == 0)
+    return;
+
   TRandom *rdm = new TRandom();
   rdm->SetSeed(seed);
 
