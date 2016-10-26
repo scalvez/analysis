@@ -76,22 +76,21 @@ void calcLimit(TString outFile, TString inList, TString m){
 
   if(!ok) return;
 
-
   ///Create an output container for the results you're about to calculate
   TFile f(outFile,"RECREATE");
   TTree t("SCAN","SCAN");
   CLpoint clresults;
   clresults.branch(&t);
 
-  // Choose a systematics treatment...
-  // The CLfast computation uses no systematics.  This class should only be used for testing purposes.
-  CLfast clcompute;
+  // // Choose a systematics treatment...
+  // // The CLfast computation uses no systematics.  This class should only be used for testing purposes.
+  // CLfast clcompute;
 
   // The CLsyst computation applies all systematics via Gaussian distribution
   //  CLsyst clcompute;
 
-  // // Use CLfit2 for profileLH fitting of systematics-smeared distributions using two fits per pseudoexperiement
-  //  CLfit2 clcompute;
+  // Use CLfit2 for profileLH fitting of systematics-smeared distributions using two fits per pseudoexperiement
+   CLfit2 clcompute;
 
   //Use CLfit for profileLH fitting of systematics-smeared distributions using just one fit per pseudoexperiment
   //  CLfit clcompute;
@@ -105,8 +104,8 @@ void calcLimit(TString outFile, TString inList, TString m){
    clcompute.logSigExclusion(0.005);
   **/
 
-
-   clcompute.setNoviceFlag(false);  // deactivate novice flag if you want to use stat uncertainties
+  // Noob settings
+   clcompute.setNoviceFlag(true);  // deactivate novice flag if you want to use stat uncertainties
    clcompute.useHistoStats(true);  // statistics is turned off by default, only has meaning for CLsyst, CLfit, CLfit2
 
 
@@ -117,7 +116,8 @@ void calcLimit(TString outFile, TString inList, TString m){
 
   //95% CL is the default value
   // csLim.setCLlevel(0.95);
-  csLim.setCLlevel(0.68);
+  csLim.setCLlevel(0.90);
+  // csLim.setCLlevel(0.68);
 
   //The range of CL values that will satisfy the algorithm: -0.001 < (CL-0.95) < 0.001
   csLim.setAccuracy(0.001);
@@ -173,6 +173,7 @@ void calcLimit(TString outFile, TString inList, TString m){
       //Extract the signal & background distributions associated with this point
       SigBkgdDist* sbd=loaders[0].get(v1[i],v2[i],v3[i]);
       printf("==>Adding channel %s\n",chanNames[0].c_str());
+      // MyComment : Signal is indexed 0, add the other nld-1 backgrounds
       for(int l=1; l<nld; l++){
 	SigBkgdDist* sbd2=loaders[l].get(v1[i],v2[i],v3[i]);
 	if(sbd2){
@@ -183,7 +184,7 @@ void calcLimit(TString outFile, TString inList, TString m){
 
       printf("Sig: %f, Bkgd: %f, Data: %f\n",sbd->totSignal(),sbd->totBkgd(),sbd->totData());
 
-      // //If you wish to run the fit test, uncomment the next two lines
+      //If you wish to run the fit test, uncomment the next two lines
       // fitTest.runTest(sbd,1e6);
       // continue;
 

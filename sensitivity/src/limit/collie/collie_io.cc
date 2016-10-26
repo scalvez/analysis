@@ -11,10 +11,12 @@ int main(int argc, char* argv[]) {
   cfile->initFile("io_file.root", "0nu");
 
   // Define your input histograms
-  double Xmin = 0.0;
-  double Xmax = 5000.0;
-  int Nbins = 100;
-  //
+  // double Xmin = 0.0;
+  // double Xmax = 5000.0;
+  // int Nbins = 100;
+  double Xmin = 2.45;
+  double Xmax = 4;
+  int Nbins = 31;
 
   cfile->setInputHist(Xmin,Xmax,Nbins);
 
@@ -33,14 +35,21 @@ int main(int argc, char* argv[]) {
   bkgdNames.push_back("2nu");
   cfile->createChannel(bkgdNames);
 
-  TFile infile_sig("$SW_WORK_DIR/analysis/sensitivity/data/pdf/0nu_pdf.root");
-  TH1D* sig = (TH1D*)infile_sig.Get("2e_electrons_energy_sum");
+  // TFile infile_sig("$SW_WORK_DIR/analysis/sensitivity/data/pdf/0nu_pdf.root");
+  // TH1D* sig = (TH1D*)infile_sig.Get("2e_electrons_energy_sum");
 
-  TFile infile_bkg("$SW_WORK_DIR/analysis/sensitivity/data/pdf/2nu_pdf.root");
-  TH1D* bkgd1 = (TH1D*)infile_bkg.Get("2e_electrons_energy_sum");
+  // TFile infile_bkg("$SW_WORK_DIR/analysis/sensitivity/data/pdf/2nu_pdf.root");
+  // TH1D* bkgd1 = (TH1D*)infile_bkg.Get("2e_electrons_energy_sum");
 
-  TFile infile_data("$SW_WORK_DIR/analysis/sensitivity/data/pseudo/2nu_pseudo.root");
-  TH1D* data = (TH1D*)infile_data.Get("2e_electrons_energy_sum");
+  // TFile infile_data("$SW_WORK_DIR/analysis/sensitivity/data/pseudo/2nu_pseudo.root");
+  // TH1D* data = (TH1D*)infile_data.Get("2e_electrons_energy_sum");
+
+  TFile infile("bayes_output.root");
+  TH1D* sig = (TH1D*)infile.Get("sig_pdf_trunc");
+  TH1D* bkgd1 = (TH1D*)infile.Get("bkg_pdf_trunc");
+  TH1D* data = (TH1D*)infile.Get("data");
+
+  std::cout << "debug " << data->GetBinContent(1) << std::endl;
 
   // Make sure you keep track of statistical uncertainties in histograms correctly
   bkgd1->Sumw2();
@@ -54,7 +63,8 @@ int main(int argc, char* argv[]) {
   // for(int m=0; m<=10; m+=1){
   for(int m=0; m<=0; m+=1){
 
-    bkgd1->Scale(7657);
+    // bkgd1->Scale(7657);
+    bkgd1->Scale(34);
     sig->Scale(1);
 
     //Backgrounds are passed in via vector
