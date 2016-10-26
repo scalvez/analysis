@@ -56,10 +56,14 @@ int main(int argc, char* argv[]) {
   TH1F *h_sig_pdf_trunc = new TH1F("sig_pdf_trunc","sig_pdf_trunc",31,2.45,4);
 
   for(auto i_pdf = 50; i_pdf <= 80; ++i_pdf) {
-    h_bkg_pdf_trunc->Fill(h_pdf_bkg->GetXaxis()->GetBinCenter(i_pdf),
-                          h_pdf_bkg->GetBinContent(i_pdf));
-    h_sig_pdf_trunc->Fill(h_pdf_sig->GetXaxis()->GetBinCenter(i_pdf),
-                          h_pdf_sig->GetBinContent(i_pdf));
+    h_bkg_pdf_trunc->SetBinContent(i_pdf-49,
+                                   h_pdf_bkg->GetBinContent(i_pdf));
+    h_bkg_pdf_trunc->SetBinError(i_pdf-49,
+                                 h_pdf_bkg->GetBinError(i_pdf));
+    h_sig_pdf_trunc->SetBinContent(i_pdf-49,
+                                   h_pdf_sig->GetBinContent(i_pdf));
+    h_sig_pdf_trunc->SetBinError(i_pdf-49,
+                                 h_pdf_sig->GetBinError(i_pdf));
   }
 
   h_bkg_pdf_trunc->Scale(1./h_bkg_pdf_trunc->Integral(1,h_bkg_pdf_trunc->GetNbinsX()));
@@ -77,7 +81,7 @@ int main(int argc, char* argv[]) {
     pdf_S.push_back(h_sig_pdf_trunc->GetBinContent(i_pdf));
   }
 
-  int seed = 1;
+  int seed = 0;
   TRandom *rdm = new TRandom();
   rdm->SetSeed(seed);
 
@@ -87,8 +91,8 @@ int main(int argc, char* argv[]) {
   // Histogram holding the different pseudo-experiment (reset for each one)
   TH1 *h_data = new TH1I("data","data",31,2.45,4);
 
-  for(unsigned int i_pseudo =0; i_pseudo<200; ++i_pseudo) {
-  // for(unsigned int i_pseudo =0; i_pseudo<1; ++i_pseudo) {
+  // for(unsigned int i_pseudo =0; i_pseudo<200; ++i_pseudo) {
+  for(unsigned int i_pseudo =0; i_pseudo<1; ++i_pseudo) {
     std::cout << "pseudo_experiment n°" << i_pseudo << std::endl;
 
     // Reset the pseudo-data from one pseudo-experiment to the other
@@ -160,11 +164,10 @@ int main(int argc, char* argv[]) {
   h_pdf_bkg->SetAxisRange(2.45,4);
 
   h_pdf_bkg->Write();
-  // h_data->Write();
 
   h_s90->Write();
   g_p->Write();
   f->Close();
-  // std::cout << "proba is " << p << std::endl;
+
   return 0;
 }
