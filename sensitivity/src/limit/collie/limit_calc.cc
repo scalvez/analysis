@@ -86,11 +86,11 @@ void calcLimit(TString outFile, TString inList, TString m){
   // // The CLfast computation uses no systematics.  This class should only be used for testing purposes.
   // CLfast clcompute;
 
-  // The CLsyst computation applies all systematics via Gaussian distribution
+  // // The CLsyst computation applies all systematics via Gaussian distribution
   //  CLsyst clcompute;
 
   // Use CLfit2 for profileLH fitting of systematics-smeared distributions using two fits per pseudoexperiement
-   CLfit2 clcompute;
+  CLfit2 clcompute;
 
   //Use CLfit for profileLH fitting of systematics-smeared distributions using just one fit per pseudoexperiment
   //  CLfit clcompute;
@@ -104,9 +104,9 @@ void calcLimit(TString outFile, TString inList, TString m){
    clcompute.logSigExclusion(0.005);
   **/
 
-  // Noob settings
-   clcompute.setNoviceFlag(true);  // deactivate novice flag if you want to use stat uncertainties
-   clcompute.useHistoStats(true);  // statistics is turned off by default, only has meaning for CLsyst, CLfit, CLfit2
+
+  clcompute.setNoviceFlag(false);  // deactivate novice flag if you want to use stat uncertainties
+  clcompute.useHistoStats(true);  // statistics is turned off by default, only has meaning for CLsyst, CLfit, CLfit2
 
 
   /// This is the class for computing cross section limits
@@ -164,7 +164,7 @@ void calcLimit(TString outFile, TString inList, TString m){
   //loop over all masspoints and perform calculations
   for (int i=0; i<len; i++) {
     if(v1[i]==mass || mass==-1){
-    // if(1){
+      // if(1){
       //tell the container what point you're working on
       clresults.reset(v1[i],v2[i],v3[i]);
 
@@ -184,7 +184,7 @@ void calcLimit(TString outFile, TString inList, TString m){
 
       printf("Sig: %f, Bkgd: %f, Data: %f\n",sbd->totSignal(),sbd->totBkgd(),sbd->totData());
 
-      //If you wish to run the fit test, uncomment the next two lines
+      // //If you wish to run the fit test, uncomment the next two lines
       // fitTest.runTest(sbd,1e6);
       // continue;
 
@@ -218,32 +218,32 @@ void calcLimit(TString outFile, TString inList, TString m){
 
 }
 void Usage() {
-	printf("Using collieLimitCalc.exe:\n");
-	printf(" collieLimitCalc.exe [ Output ROOT File ] [ List of input files ] [ Test Point ]\n");
-	printf(" The test point input is the integer test variable you wish to look at.\n");
-	printf(" If you leave off the test point, the code will loop over all\n");
-	printf(" available points in succession.\n");
+  printf("Using collieLimitCalc.exe:\n");
+  printf(" collieLimitCalc.exe [ Output ROOT File ] [ List of input files ] [ Test Point ]\n");
+  printf(" The test point input is the integer test variable you wish to look at.\n");
+  printf(" If you leave off the test point, the code will loop over all\n");
+  printf(" available points in succession.\n");
 }
 
 int main(int argc, char* argv[]) {
 
-   timeval a,b;
-   gettimeofday(&a,NULL);
-   if(argc==1){
-     Usage();
-     return 1;
-   }
+  timeval a,b;
+  gettimeofday(&a,NULL);
+  if(argc==1){
+    Usage();
+    return 1;
+  }
 
-   if(argc<4) calcLimit(argv[1],argv[2],"-1");
-   else calcLimit(argv[1],argv[2],argv[3]);
+  if(argc<4) calcLimit(argv[1],argv[2],"-1");
+  else calcLimit(argv[1],argv[2],argv[3]);
 
 
-   gettimeofday(&b,NULL);
-   double deltat=a.tv_sec*1000.0+a.tv_usec/1000.0;
-   deltat=b.tv_sec*1000.0+b.tv_usec/1000.0-deltat;
-   printf(" %f sec run time\n",deltat/1000);
-   printf("\n");
-   return 0;
+  gettimeofday(&b,NULL);
+  double deltat=a.tv_sec*1000.0+a.tv_usec/1000.0;
+  deltat=b.tv_sec*1000.0+b.tv_usec/1000.0-deltat;
+  printf(" %f sec run time\n",deltat/1000);
+  printf("\n");
+  return 0;
 
 }
 

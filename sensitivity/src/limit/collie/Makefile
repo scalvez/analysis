@@ -142,7 +142,10 @@ IOHEADERS += ${IO_INC}/InfoForEfficiencyCalculation.hh
 ALLSRCS := ${LIMITSRCS} ${IOSRCS}
 ALLOBJS :=$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,${ALLSRCS})))
 
-all: collie_io.exe limit_calc.exe
+all: example_collie_io.exe collie_io.exe limit_calc.exe
+
+example_collie_io.exe: example_collie_io.o
+	gcc -o $@ $^ ${CXXFLAGS} ${LDFLAGS} ${LOADLIBS} ${EXAMPLELIBS} ${SEARCHDIRS} ${ROOTLIBS}
 
 collie_io.exe: collie_io.o
 	gcc -o $@ $^ ${CXXFLAGS} ${LDFLAGS} ${LOADLIBS} ${EXAMPLELIBS} ${SEARCHDIRS} ${ROOTLIBS}

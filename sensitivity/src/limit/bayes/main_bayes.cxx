@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
   double p0_H = 0.5;
   double p0_Hbar = 0.5;
 
-  TH1F* h_s90 = new TH1F("h","h",10,0,10);
+  TH1F* h_s90 = new TH1F("h_s90","h_s90",10,0,10);
   TGraph* g_p = new TGraph();
 
   // Get the signal pdf

@@ -3,6 +3,18 @@
 
 int main(int argc, char* argv[]) {
 
+  // TFile infile("test.root");
+  TFile infile("bayes_output.root");
+  TH1D* bkgd1 = (TH1D*)infile.Get("bkg_pdf_trunc");
+  TH1D* sig = (TH1D*)infile.Get("sig_pdf_trunc");
+  TH1D* data = (TH1D*)infile.Get("data");
+
+  // TFile *f= new TFile("test.root", "RECREATE");
+  // sig->Write();
+  // bkgd1->Write();
+  // data->Write();
+  // f->Close();
+
   /////////////////////////////////////////
   ///Create IO file with input parameters
   /////////////////////////////////////////
@@ -27,8 +39,7 @@ int main(int argc, char* argv[]) {
   cfile->setRebin(1);
 
   // cfile->setSmooth(false);
-  //  cfile->setHistNorm(50000);
-
+  // cfile->setHistNorm(50000);
 
   //Define backgrounds
   vector<string> bkgdNames;
@@ -44,17 +55,10 @@ int main(int argc, char* argv[]) {
   // TFile infile_data("$SW_WORK_DIR/analysis/sensitivity/data/pseudo/2nu_pseudo.root");
   // TH1D* data = (TH1D*)infile_data.Get("2e_electrons_energy_sum");
 
-  TFile infile("bayes_output.root");
-  TH1D* sig = (TH1D*)infile.Get("sig_pdf_trunc");
-  TH1D* bkgd1 = (TH1D*)infile.Get("bkg_pdf_trunc");
-  TH1D* data = (TH1D*)infile.Get("data");
-
-  std::cout << "debug " << data->GetBinContent(1) << std::endl;
-
   // Make sure you keep track of statistical uncertainties in histograms correctly
-  bkgd1->Sumw2();
-  sig->Sumw2();
-  data->Sumw2();
+  // bkgd1->Sumw2();
+  // sig->Sumw2();
+  // data->Sumw2();
 
   TRandom r(1234);
   double niter = 5e5;
@@ -105,10 +109,12 @@ int main(int argc, char* argv[]) {
     //   Signal requires no index, but backgrounds must be specifically indexed (0->N bkgds)
     //   Read the instructions in collie/io/include/CollieIOFile.hh if you're in doubt
     // cfile->createFlatSigSystematic("Lumi",0.01,0.01,m);
-    cfile->createFlatSigSystematic("Eff",0.01,0.01,m);
 
-    // cfile->createFlatBkgdSystematic(0,"Lumi",0.01,0.01,m);
-    cfile->createFlatBkgdSystematic(0,"Eff",0.01,0.01,m);
+    //test
+    cfile->createFlatSigSystematic("Eff",0.1,0.1,m);
+
+    // // cfile->createFlatBkgdSystematic(0,"Lumi",0.01,0.01,m);
+    cfile->createFlatBkgdSystematic(0,"Eff",0.1,0.1,m);
 
     // Example of systematics input as histograms, can be flat or function of final variable
     //==>Use this method if you're inputing fractional shape systematics
