@@ -47,7 +47,7 @@ void limit_gerda_model() {
   w.factory("Uniform:bkg_pdf(x[0,100])");
   w.factory("Gaussian:sig_pdf(x, mass[50], sigma[1])");
 
-  w.factory("SUM:model(nsig[0,1000]*sig_pdf, nbkg[0,1000000]*bkg_pdf)");  // for extended model
+  w.factory("SUM:model(nsig[0,100]*sig_pdf, nbkg[0,1000]*bkg_pdf)");  // for extended model
 
   RooAbsPdf * pdf = w.pdf("model");
   RooRealVar * x = w.var("x");  // the observable
@@ -66,7 +66,7 @@ void limit_gerda_model() {
   x->setBins(100);
   RooPlot * plot = x->frame();
   data->plotOn(plot);
-  plot->Draw();
+  // plot->Draw();
 
   pdf->fitTo(*data);
 
@@ -78,7 +78,7 @@ void limit_gerda_model() {
   pdf->plotOn(plot, RooFit::Components("sig_pdf"), RooFit::LineColor(kRed), RooFit::LineStyle(kDashed));
   // add also the fit parameters
   pdf->paramOn(plot);
-  plot->Draw();
+  // plot->Draw();
 
   RooStats::ModelConfig mc("ModelConfig",&w);
   mc.SetPdf(*pdf);
@@ -92,16 +92,14 @@ void limit_gerda_model() {
   // import model in the workspace
   w.import(mc);
 
-  // // write the workspace in the file
-  // TString fileName = "SPlusBExpoModel.root";
-  // w.writeToFile(fileName,true);
-  // cout << "model written to file " << fileName << endl;
+  double confidenceLevel = 0.9;
 
+  /*
   ProfileLikelihoodCalculator pl(*data,mc);
-  pl.SetConfidenceLevel(0.90); // 68.3% interval
+  pl.SetConfidenceLevel(confidenceLevel); // 68.3% interval
   LikelihoodInterval* interval = pl.GetInterval();
 
-   // find the interval on the first Parameter of Interest (nsig)
+  // find the interval on the first Parameter of Interest (nsig)
   RooRealVar* firstPOI = (RooRealVar*) mc.GetParametersOfInterest()->first();
 
   double lowerLimit = interval->LowerLimit(*firstPOI);
@@ -115,7 +113,94 @@ void limit_gerda_model() {
   // //plot->SetRange(0,100);  // possible eventually to change ranges
   // plot->SetNPoints(50);  // do not use too many points, it could become very slow for some models
   // plot->Draw("");  // use option TF1 if too slow (plot.Draw("tf1")
-  lim += upperLimit;
+  */
+
+  // Feldman-Cousing didn't appear to work
+
+  /*
+  //Bayesian MCMC
+  // this proposal function seems fairly robust
+  SequentialProposal sp(0.1);
+
+  MCMCCalculator mcmc(*data,mc);
+  mcmc.SetConfidenceLevel(confidenceLevel);
+  //  mcmc.SetProposalFunction(*pf);
+  mcmc.SetProposalFunction(sp);
+  mcmc.SetNumIters(100000);         // Metropolis-Hastings algorithm iterations
+  mcmc.SetNumBurnInSteps(50);       // first N steps to be ignored as burn-in
+
+  // default is the shortest interval.  here use central
+  // mcmc.SetLeftSideTailFraction(0.5); // for central Bayesian interval
+  mcmc.SetLeftSideTailFraction(0); // for one-sided Bayesian interval
+
+  RooRealVar* firstPOI = (RooRealVar*) mc.GetParametersOfInterest()->first();
+  //firstPOI->setMax(100);
+
+  MCMCInterval* interval = mcmc.GetInterval();
+
+  // print out the iterval on the first Parameter of Interest
+  cout << "\n90% interval on " <<firstPOI->GetName()<<" is : ["<<
+    interval->LowerLimit(*firstPOI) << ", "<<
+    interval->UpperLimit(*firstPOI) <<"] "<<endl;
+
+  // // make a plot of posterior function
+  // TCanvas* c1 = new TCanvas("IntervalPlot");
+  // MCMCIntervalPlot plot2(*interval);
+  // plot2.Draw();
+  */
+
+
+  BayesianCalculator bayesianCalc(*data,mc);
+  bayesianCalc.SetConfidenceLevel(confidenceLevel);
+
+  // set the type of interval (not really needed for central which is the default)
+  // bayesianCalc.SetLeftSideTailFraction(0.5); // for central interval
+  bayesianCalc.SetLeftSideTailFraction(0.); // for upper limit
+  //bayesianCalc.SetShortestInterval(); // for shortest interval
+
+
+  // set the integration type (not really needed for the default ADAPTIVE)
+  // possible alternative values are  "VEGAS" , "MISER", or "PLAIN"  (MC integration from libMathMore)
+  // "TOYMC" (toy MC integration, work when nuisances exist and they have a constraints pdf)
+  TString integrationType = "";
+
+  // this is needed if using TOYMC
+  if (integrationType.Contains("TOYMC") ) {
+    RooAbsPdf * nuisPdf = RooStats::MakeNuisancePdf(mc, "nuisance_pdf");
+    if (nuisPdf) bayesianCalc.ForceNuisancePdf(*nuisPdf);
+  }
+
+  bayesianCalc.SetIntegrationType(integrationType);
+
+  // compute interval by scanning the posterior function
+  // it is done by default when computing shortest intervals
+  bayesianCalc.SetScanOfPosterior(100);
+
+  RooRealVar* firstPOI = (RooRealVar*) mc.GetParametersOfInterest()->first();
+
+  SimpleInterval* interval = bayesianCalc.GetInterval();
+  if (!interval) {
+     cout << "Error computing Bayesian interval - exit " << endl;
+     return;
+  }
+
+
+  double lowerLimit = interval->LowerLimit();
+  double upperLimit = interval->UpperLimit();
+
+  cout << "\n90% interval on " <<firstPOI->GetName()<<" is : ["<<
+    lowerLimit << ", "<<
+    upperLimit <<"] "<<endl;
+
+  // draw plot of posterior function
+
+  TCanvas* c_bc = new TCanvas("IntervalPlot");
+
+  RooPlot * plot_bc = bayesianCalc.GetPosteriorPlot();
+  if (plot_bc) plot_bc->Draw();
+
+  // lim += interval->UpperLimit(*firstPOI);
+  lim += interval->UpperLimit();
   }
   std::cout << std::endl << "--- Average limit is " << lim/100 << std::endl;
   return;
