@@ -3,13 +3,42 @@
 
 #include "TMath.h"
 
-long int factorial(int n)
-{
-  if(n>=20)
-    return 1e18;
+// long int factorial(int n)
+// {
+//   if(n>=20)
+//     return 1e18;
 
-  return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
-}
+//   return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
+// }
+
+std::vector< long int > v_factorial = {
+  1,
+  1,
+  2,
+  6,
+  24,
+  120,
+  720,
+  5040,
+  40320,
+  362880,
+  3628800,
+  39916800,
+  479001600,
+  6227020800,
+  87178291200,
+  1307674368000,
+  20922789888000,
+  355687428096000,
+  6402373705728000,
+  121645100408832000
+};
+
+  long int factorial(int n)
+  {
+    return n>=20 ? 1e18 : v_factorial[n];
+  }
+
 
 int log_factorial(int n)
 {
