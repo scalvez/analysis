@@ -3,11 +3,19 @@
 
 int main(int argc, char* argv[]) {
 
-  // TFile infile("test.root");
-  TFile infile("bayes_output.root");
-  TH1D* bkgd1 = (TH1D*)infile.Get("bkg_pdf_trunc");
-  TH1D* sig = (TH1D*)infile.Get("sig_pdf_trunc");
-  TH1D* data = (TH1D*)infile.Get("data");
+  // // TFile infile("test.root");
+  // TFile infile("bayes_output.root");
+  // TH1D* bkgd1 = (TH1D*)infile.Get("bkg_pdf_trunc");
+  // TH1D* sig = (TH1D*)infile.Get("sig_pdf_trunc");
+  // TH1D* data = (TH1D*)infile.Get("data");
+
+  // TFile f_0nu_pdf("/home/calvez/nemo/work_dir/analysis/sensitivity/data/pdf/0nu_pdf.root");
+  // TFile f_2nu_pdf("/home/calvez/nemo/work_dir/analysis/sensitivity/data/pdf/2nu_pdf.root");
+  // TFile f_data("/home/calvez/nemo/work_dir/analysis/sensitivity/data/pseudo/2nu_pseudo.root");
+
+  // TH1D* bkgd1 = (TH1D*)f_2nu_pdf.Get("2e_electrons_energy_sum");
+  // TH1D* sig = (TH1D*)f_0nu_pdf.Get("2e_electrons_energy_sum");
+  // TH1D* data = (TH1D*)data.Get("2e_electrons_energy_sum");
 
   // TFile *f= new TFile("test.root", "RECREATE");
   // sig->Write();
@@ -27,8 +35,8 @@ int main(int argc, char* argv[]) {
   // double Xmax = 5000.0;
   // int Nbins = 100;
   double Xmin = 2.45;
-  double Xmax = 4;
-  int Nbins = 31;
+  double Xmax = 3.2;
+  int Nbins = 15;
 
   cfile->setInputHist(Xmin,Xmax,Nbins);
 
@@ -44,19 +52,32 @@ int main(int argc, char* argv[]) {
   //Define backgrounds
   vector<string> bkgdNames;
   bkgdNames.push_back("2nu");
+  bkgdNames.push_back("tl208");
+  bkgdNames.push_back("bi214");
+  bkgdNames.push_back("radon");
   cfile->createChannel(bkgdNames);
 
-  // TFile infile_sig("$SW_WORK_DIR/analysis/sensitivity/data/pdf/0nu_pdf.root");
-  // TH1D* sig = (TH1D*)infile_sig.Get("2e_electrons_energy_sum");
+  TFile infile_sig("$SW_WORK_DIR/analysis/sensitivity/data/pdf/0nu_pdf_trunc.root");
+  TH1D* sig = (TH1D*)infile_sig.Get("2e_electrons_energy_sum");
 
-  // TFile infile_bkg("$SW_WORK_DIR/analysis/sensitivity/data/pdf/2nu_pdf.root");
-  // TH1D* bkgd1 = (TH1D*)infile_bkg.Get("2e_electrons_energy_sum");
+  TFile infile_bkg1("$SW_WORK_DIR/analysis/sensitivity/data/pdf/2nu_pdf_trunc.root");
+  TH1D* bkgd1 = (TH1D*)infile_bkg1.Get("2e_electrons_energy_sum");
 
-  // TFile infile_data("$SW_WORK_DIR/analysis/sensitivity/data/pseudo/2nu_pseudo.root");
-  // TH1D* data = (TH1D*)infile_data.Get("2e_electrons_energy_sum");
+  TFile infile_bkg2("$SW_WORK_DIR/analysis/sensitivity/data/pdf/tl208_pdf_trunc.root");
+  TH1D* bkgd2 = (TH1D*)infile_bkg2.Get("2e_electrons_energy_sum");
+
+  TFile infile_bkg3("$SW_WORK_DIR/analysis/sensitivity/data/pdf/bi214_pdf_trunc.root");
+  TH1D* bkgd3 = (TH1D*)infile_bkg3.Get("2e_electrons_energy_sum");
+
+  TFile infile_bkg4("$SW_WORK_DIR/analysis/sensitivity/data/pdf/radon_pdf_trunc.root");
+  TH1D* bkgd4 = (TH1D*)infile_bkg4.Get("2e_electrons_energy_sum");
+
+  TFile infile_data("$SW_WORK_DIR/analysis/sensitivity/data/pseudo/pseudo_trunc.root");
+  TH1D* data = (TH1D*)infile_data.Get("2e_electrons_energy_sum");
 
   // Make sure you keep track of statistical uncertainties in histograms correctly
   // bkgd1->Sumw2();
+  // bkgd2->Sumw2();
   // sig->Sumw2();
   // data->Sumw2();
 
@@ -67,18 +88,33 @@ int main(int argc, char* argv[]) {
   // for(int m=0; m<=10; m+=1){
   for(int m=0; m<=0; m+=1){
 
-    // bkgd1->Scale(7657);
-    bkgd1->Scale(34);
-    sig->Scale(1);
+    //full range
+    // bkgd1->Scale(7655);
+    // bkgd2->Scale(1);
+    // bkgd3->Scale(7);
+    // bkgd4->Scale(15);
+    // sig->Scale(1);
+
+    sig->Scale(1/sig->Integral(1,sig->GetNbinsX()));
+    bkgd1->Scale(34.3/bkgd1->Integral(1,bkgd1->GetNbinsX()));
+    bkgd2->Scale(0.06/bkgd2->Integral(1,bkgd2->GetNbinsX()));
+    bkgd3->Scale(0.34/bkgd3->Integral(1,bkgd3->GetNbinsX()));
+    bkgd4->Scale(0.64/bkgd4->Integral(1,bkgd4->GetNbinsX()));
 
     //Backgrounds are passed in via vector
     vector<TH1D*> vbkgd;
     vbkgd.push_back(bkgd1);
+    vbkgd.push_back(bkgd2);
+    vbkgd.push_back(bkgd3);
+    vbkgd.push_back(bkgd4);
 
     //Alpha parameters only matter when smoothing is utilized
     //  Input values don't matter if you're not smoothing.
     //  Don't smooth unless you know what you're doing.
     vector<double> valpha;
+    valpha.push_back(-1);
+    valpha.push_back(-1);
+    valpha.push_back(-1);
     valpha.push_back(-1);
 
     ///Use this tool to allow collie to generate a low-stats safe
@@ -111,10 +147,13 @@ int main(int argc, char* argv[]) {
     // cfile->createFlatSigSystematic("Lumi",0.01,0.01,m);
 
     //test
-    cfile->createFlatSigSystematic("Eff",0.1,0.1,m);
+    cfile->createFlatSigSystematic("Eff",0.05,0.05,m);
 
     // // cfile->createFlatBkgdSystematic(0,"Lumi",0.01,0.01,m);
-    cfile->createFlatBkgdSystematic(0,"Eff",0.1,0.1,m);
+    cfile->createFlatBkgdSystematic(0,"Eff",0.05,0.05,m);
+    cfile->createFlatBkgdSystematic(1,"Eff",0.05,0.05,m);
+    cfile->createFlatBkgdSystematic(2,"Eff",0.05,0.05,m);
+    cfile->createFlatBkgdSystematic(3,"Eff",0.05,0.05,m);
 
     // Example of systematics input as histograms, can be flat or function of final variable
     //==>Use this method if you're inputing fractional shape systematics
