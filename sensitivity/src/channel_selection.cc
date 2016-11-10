@@ -27,15 +27,8 @@ void channel_selection(TString isotope, std::vector<TString> quantities_pdf, boo
   // const std::string topology_2e2g = "2e2g";
   // const std::string topology_2e3g = "2e3g";
 
-  // const std::string test_string = "2e_electrons_internal_probability > 0.04 ";
-  // const char *prob_cut = test_string.c_str();
-
-  // // const TString prob_cut = "2e_electrons_internal_probability > " + internal_probability_min;
-  // const TCut good_internal_probability_cut = prob_cut;
-  // const TCut beta_beta_like_cut = prob_cut;
-
   TString input_file = "../data/trees/" + isotope + "/merge.root";
-  TString output_file = "../data/pdf/" + isotope + "_pdf.root";
+  TString output_file = "../data/trees/" + isotope + "_pdf.root";
 
   TFile *f = TFile::Open(input_file);
   TTree *tree = (TTree*)f->Get("snemodata");
@@ -76,11 +69,19 @@ void channel_selection(TString isotope, std::vector<TString> quantities_pdf, boo
     // else
     //   tree->Project(qty,qty);
 
-    //No cuts, projected into h via its name
-    tree->Project(qty,qty);
+    // //No cuts, projected into h via its name
+    // tree->Project(qty,qty);
 
     // TCut cut = "2e_electrons_vertex_location == 0:2e_electrons_vertex_location == 0";
-    TCut cut = "2e_vertices_distance_y <= 0";
+    // TCut cut = "2e_vertices_distance_y <= 0";
+
+    // tree->Project(qty,qty,"2e_electrons_internal_probability >= 0.04 && 2e_electrons_vertices_distance_y <= 60 && 2e_electrons_vertices_distance_z <= 70 && 2e_electrons_vertex_location == 0 && 2e_electrons_energy_sum >= 2");
+
+    //get rid of 3.3 MeV event
+    if(isotope.Contains("2nu"))
+      tree->Project(qty,qty,"2e_electrons_internal_probability >= 0.04 && 2e_electrons_vertices_distance_y <= 60 && 2e_electrons_vertices_distance_z <= 70 && 2e_electrons_vertex_location == 0 && 2e_electrons_energy_sum <= 3");
+    else
+    tree->Project(qty,qty,"2e_electrons_internal_probability >= 0.04 && 2e_electrons_vertices_distance_y <= 60 && 2e_electrons_vertices_distance_z <= 70 && 2e_electrons_vertex_location == 0");
 
     // h->ClearUnderflowAndOverflow(); Unavailable with this version of ROOT
     h->SetBinContent(0,0);
@@ -102,6 +103,7 @@ void channel_selection(TString isotope, std::vector<TString> quantities_pdf, boo
 
     if(normalize)
       h->Scale(1./h->Integral(1,h->GetXaxis()->GetNbins()));
+    h->SetDrawOption("APL");
     h->Write();
 
     // std::cout << "Inserting pair " << std::endl;
