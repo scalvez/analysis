@@ -37,8 +37,16 @@ const bool print_fits = false;
 
 const std::map < std::string, double > isotope_activity = {
   {"0nu",0},
-  {"2nu",9}
+  {"2nu",9},
+  {"bi214",10e-6},
+  {"radon",150e-6},
+  {"tl208",2e-6}
 };
+
+// const std::map < std::string, double > isotope_activity = {
+//   {"0nu",0},
+//   {"2nu",9}
+// };
 
 // const std::map < std::string, double > isotope_activity = {
 //   {"2nu",9},

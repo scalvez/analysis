@@ -44,7 +44,7 @@ int get_isotope_mc_size(TString isotope) {
   if(isotope.Contains("0nu"))
     return 1e6;
   else if(isotope.Contains("2nu"))
-    return 1e6;
+    return 1e7;
   else if(isotope.Contains("tl208"))
     return 1e8;
   else if(isotope.Contains("bi214"))
