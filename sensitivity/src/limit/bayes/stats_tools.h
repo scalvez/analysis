@@ -11,7 +11,7 @@
 //   return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
 // }
 
-std::vector< long int > v_factorial = {
+const std::vector< long int > v_factorial = {
   1,
   1,
   2,
@@ -34,10 +34,10 @@ std::vector< long int > v_factorial = {
   121645100408832000
 };
 
-  long int factorial(int n)
-  {
-    return n>=20 ? 1e18 : v_factorial[n];
-  }
+long int factorial(int n)
+{
+  return n>=20 ? 1e18 : v_factorial[n];
+}
 
 
 int log_factorial(int n)
