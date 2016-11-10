@@ -52,8 +52,8 @@ int main(int argc, char* argv[]) {
 
   TH1 *h_data = new TH1I("data","data",100,0,100);
 
-  // for(unsigned int i_pseudo =0; i_pseudo<200; ++i_pseudo) {
-  for(unsigned int i_pseudo =0; i_pseudo<1; ++i_pseudo) {
+  for(unsigned int i_pseudo =0; i_pseudo<100; ++i_pseudo) {
+  // for(unsigned int i_pseudo =0; i_pseudo<1; ++i_pseudo) {
     std::cout << "pseudo_experiment n°" << i_pseudo << std::endl;
 
     //rescale signal if pseudo signal
