@@ -40,6 +40,8 @@ int main(int argc, char* argv[]) {
       std::cout << "      Isotope : " << a_isotope << std::endl;
       channel_selection(a_isotope, quantities);
     }
+    for(auto i = quantity_efficiency.begin(); i != quantity_efficiency.end();++i)
+      std::cout << "-- efficiency : " << i->first << " = " << i->second << std::endl;
   }
 
   std::cout << " Channel selection operated" << std::endl;
@@ -53,7 +55,6 @@ int main(int argc, char* argv[]) {
     for(unsigned int n_pseudo = 0; n_pseudo < number_of_pseudo_experiments; ++n_pseudo) {
       std::cout << " [] Pseudo experiment n°" << n_pseudo+1 << " / "
                 << number_of_pseudo_experiments << std::endl;
-      std::map < std::string, std::vector<double> > activity_measurement;
       for (auto i = isotope_activity.begin(); i != isotope_activity.end(); ++i) {
         const std::string & a_isotope = i->first;
         const double & a_activity = i->second;
@@ -61,6 +62,7 @@ int main(int argc, char* argv[]) {
       }
       gSystem->Exec("hadd -f ../data/pseudo/pseudo.root ../data/pseudo/*_pseudo.root");
       if(fit) {
+        std::map < std::string, std::vector<double> > activity_measurement;
         multi_fit(activity_measurement);
         std::cout << " - Reconstructed activities - " << std::endl;
         for (auto i = activity_measurement.begin(); i != activity_measurement.end(); ++i) {
