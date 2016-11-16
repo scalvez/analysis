@@ -75,7 +75,6 @@ void test_hist_pdf() {
   // hist_pdf_sig.plotOn(frame);
   // hist_pdf_bkg.plotOn(frame);
 
-
   w.var("nsig")->setVal(1000);
   w.var("nbkg")->setVal(10000);
 

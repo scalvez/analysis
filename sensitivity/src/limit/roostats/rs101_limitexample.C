@@ -67,11 +67,13 @@ void rs101_limitexample()
   RooWorkspace* wspace = new RooWorkspace();
   // wspace->factory("Poisson::countingModel(obs[150,0,300], sum(s[50,0,120]*ratioSigEff[1.,0,3.],b[100]*ratioBkgEff[1.,0.,3.]))"); // counting model
   // wspace->factory("Poisson::countingModel(obs[150,0,300], sum(s[50,0,120]*ratioSigEff[1.,0,3.],b[0.1]*ratioBkgEff[1.,0.,3.]))"); // counting model
-  wspace->factory("Poisson::countingModel(obs[150,0,300], sum(s[0,0,10]*ratioSigEff[1.,0,3.],b[1]*ratioBkgEff[1.,0.,3.]))"); // counting model
+  wspace->factory("Poisson::countingModel(obs[0,0,30], sum(s[0,0,10]*ratioSigEff[1.,0,3.],b[0,0,100]*ratioBkgEff[1.,0.,3.]))"); // counting model
   //  wspace->factory("Gaussian::sigConstraint(ratioSigEff,1,0.05)"); // 5% signal efficiency uncertainty
   //  wspace->factory("Gaussian::bkgConstraint(ratioBkgEff,1,0.1)"); // 10% background efficiency uncertainty
-  wspace->factory("Gaussian::sigConstraint(gSigEff[1,0,3],ratioSigEff,0.05)"); // 5% signal efficiency uncertainty
-  wspace->factory("Gaussian::bkgConstraint(gSigBkg[1,0,3],ratioBkgEff,0.2)"); // 10% background efficiency uncertainty
+  // wspace->factory("Gaussian::sigConstraint(gSigEff[1,0,3],ratioSigEff,0.05)"); // 5% signal efficiency uncertainty
+  // wspace->factory("Gaussian::bkgConstraint(gSigBkg[1,0,3],ratioBkgEff,0.2)"); // 10% background efficiency uncertainty
+  wspace->factory("Gaussian::sigConstraint(gSigEff[1,0,3],ratioSigEff,0.1)"); // 5% signal efficiency uncertainty
+  wspace->factory("Gaussian::bkgConstraint(gSigBkg[1,0,3],ratioBkgEff,0.1)"); // 10% background efficiency uncertainty
   wspace->factory("PROD::modelWithConstraints(countingModel,sigConstraint,bkgConstraint)"); // product of terms
   wspace->Print();
 
@@ -91,7 +93,7 @@ void rs101_limitexample()
   gSigBkg->setConstant();
 
   // Create an example dataset with 160 observed events
-  obs->setVal(1.);
+  obs->setVal(0.);
   RooDataSet* data = new RooDataSet("exampleData", "exampleData", RooArgSet(*obs));
   data->add(*obs);
 
@@ -143,8 +145,8 @@ void rs101_limitexample()
   ConfInterval* fcint = NULL;
   fcint = fc.GetInterval();  // that was easy.
 
+  /*
   RooFitResult* fit = modelWithConstraints->fitTo(*data, Save(true));
-
   // Third, use a Calculator based on Markov Chain monte carlo
   // Before configuring the calculator, let's make a ProposalFunction
   // that will achieve a high acceptance rate
@@ -163,7 +165,7 @@ void rs101_limitexample()
   mc.SetProposalFunction(*pdfProp);
   mc.SetLeftSideTailFraction(0.5);  // find a "central" interval
   MCMCInterval* mcInt = (MCMCInterval*)mc.GetInterval();  // that was easy
-
+  */
   // Get Lower and Upper limits from Profile Calculator
   std::cout << "Profile lower limit on s = " << ((LikelihoodInterval*) lrint)->LowerLimit(*s) << std::endl;
   std::cout << "Profile upper limit on s = " << ((LikelihoodInterval*) lrint)->UpperLimit(*s) << std::endl;
@@ -182,7 +184,7 @@ void rs101_limitexample()
      fculLine->Draw("same");
      dataCanvas->Update();
   }
-
+  /*
   // Plot MCMC interval and print some statistics
   MCMCIntervalPlot mcPlot(*mcInt);
   mcPlot.SetLineColor(kMagenta);
@@ -200,7 +202,6 @@ void rs101_limitexample()
   dataCanvas->cd(2);
   // also plot the points in the markov chain
   RooDataSet * chainData = mcInt->GetChainAsDataSet();
-
   assert(chainData);
   std::cout << "plotting the chain data - nentries = " << chainData->numEntries() << std::endl;
   TTree* chain =  RooStats::GetAsTTree("chainTreeData","chainTreeData",*chainData);
@@ -209,6 +210,7 @@ void rs101_limitexample()
   chain->SetMarkerColor(kRed);
 
   chain->Draw("s:ratioSigEff:ratioBkgEff","nll_MarkovChain_local_","box"); // 3-d box proporional to posterior
+  */
 
   // the points used in the profile construction
   RooDataSet * parScanData = (RooDataSet*) fc.GetPointsToScan();
@@ -233,7 +235,7 @@ void rs101_limitexample()
 
   delete wspace;
   delete lrint;
-  delete mcInt;
+  // delete mcInt;
   delete fcint;
   delete data;
 

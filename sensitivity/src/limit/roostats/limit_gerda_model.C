@@ -40,7 +40,8 @@ using namespace RooStats ;
 void limit_gerda_model() {
 
   double lim = 0;
-  for(unsigned int i=1; i<=100;++i) {
+  for(unsigned int i=1; i<=1;++i) {
+    // for(unsigned int i=1; i<=100;++i) {
     // if(!(i%10))
     //   std::cout << " i " << i << std::endl;
   RooWorkspace w("w");
@@ -54,10 +55,11 @@ void limit_gerda_model() {
 
   // generate the data (nsig = 30, nbkg=1000)
   w.var("nsig")->setVal(0);
-  w.var("nbkg")->setVal(10);
+  w.var("nbkg")->setVal(1);
   // use fixed random numbers for reproducibility
-  // RooRandom::randomGenerator()->SetSeed(111);
+   // RooRandom::randomGenerator()->SetSeed(111);
   RooRandom::randomGenerator()->SetSeed(i);
+  // RooRandom::randomGenerator()->SetSeed(0);
   RooDataSet * data = pdf->generate(*x);  // will generate according to total S+B events
   data->SetName("data");
   w.import(*data);
@@ -66,7 +68,7 @@ void limit_gerda_model() {
   x->setBins(100);
   RooPlot * plot = x->frame();
   data->plotOn(plot);
-  // plot->Draw();
+  plot->Draw();
 
   pdf->fitTo(*data);
 
@@ -149,7 +151,6 @@ void limit_gerda_model() {
   // plot2.Draw();
   */
 
-
   BayesianCalculator bayesianCalc(*data,mc);
   bayesianCalc.SetConfidenceLevel(confidenceLevel);
 
@@ -200,7 +201,9 @@ void limit_gerda_model() {
   if (plot_bc) plot_bc->Draw();
 
   // lim += interval->UpperLimit(*firstPOI);
-  lim += interval->UpperLimit();
+  //lim += interval->UpperLimit();
+  lim += upperLimit;
+
   }
   std::cout << std::endl << "--- Average limit is " << lim/100 << std::endl;
   return;

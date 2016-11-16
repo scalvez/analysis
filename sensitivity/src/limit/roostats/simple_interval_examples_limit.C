@@ -56,8 +56,7 @@ mcmc interval is     [-0.166999, 0.230224]
 using namespace RooFit ;
 using namespace RooStats ;
 
-
-void interval_examples()
+void simple_interval_examples_limit()
 {
 
   // Time this macro
