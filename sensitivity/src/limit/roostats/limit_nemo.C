@@ -61,11 +61,12 @@ void limit_nemo() {
   RooHistPdf hist_pdf_sig("hist_pdf_sig","hist_pdf_sig",E,sig_hist,0);
   RooHistPdf hist_pdf_bkg1("hist_pdf_bkg1","hist_pdf_bkg1",E,bkg1_hist,0);
 
-  RooRealVar nsig("nsig","fitted number of 0nu events",100,0,1000);
-  RooRealVar nbkg1("nbkg","fitted number of 2nu events",100,0,10000);
+  RooRealVar nsig("nsig","fitted number of 0nu events",0,0,1000);
+  RooRealVar nbkg1("nbkg","fitted number of 2nu events",34,0,10000);
 
   RooAddPdf model("model","model",RooArgList(hist_pdf_sig,hist_pdf_bkg1),RooArgList(nsig,nbkg1));
 
+  // RooRandom::randomGenerator()->SetSeed(4);
   RooDataSet* data = model.generate(E);
 
   RooPlot* frame = E.frame(Title("Energy sum"),Bins(15));
@@ -73,9 +74,114 @@ void limit_nemo() {
   // sig_hist.plotOn(frame);
   // bkg1_hist.plotOn(frame);
   data->plotOn(frame);
-  model.fitTo(*data);
+  data->plotOn(frame);
+  model.plotOn(frame, RooFit::LineColor(kGray));
+  model.plotOn(frame, RooFit::Components("hist_pdf_bkg1"), RooFit::LineStyle(kDashed) );
+  model.plotOn(frame, RooFit::Components("hist_pdf_sig"), RooFit::LineColor(kRed), RooFit::LineStyle(kDashed));
 
-  model.plotOn(frame);
+  RooFitResult * fit_res = model.fitTo(*data, RooFit::Save(true), RooFit::Minimizer("Minuit2","Migrad"));
+
+  // fit_res->Print();
+
+  // std::cout << " test " << nsig << std::endl;
+  // model.plotOn(frame);
+  // frame->Draw();
+
+  RooWorkspace *w = new RooWorkspace("w","workspace") ;
+  w->import(model) ;
+  w->import(*data) ;
+  w->Print() ;
+
+  // RooRealVar * test = w->var("nsig");
+  // test->plotOn(frame);
+  // std::cout << "test " << test << std::endl;
+
+  // RooAbsPdf * pdf = w.pdf("model");
+
+  RooStats::ModelConfig mc("ModelConfig",w);
+  mc.SetPdf(model);
+  mc.SetParametersOfInterest(*w->var("nsig"));
+  mc.SetObservables(*w->var("E"));
+  w->defineSet("nuisParams","nbkg");
+
+  mc.SetNuisanceParameters(*w->set("nuisParams"));
+
+  w->import(mc);
+
+  double confidenceLevel = 0.9;
+
+  /* // Bayesian calculator
+    BayesianCalculator bayesianCalc(*data,mc);
+  bayesianCalc.SetConfidenceLevel(confidenceLevel);
+
+  // set the type of interval (not really needed for central which is the default)
+  // bayesianCalc.SetLeftSideTailFraction(0.5); // for central interval
+  bayesianCalc.SetLeftSideTailFraction(0.); // for upper limit
+  //bayesianCalc.SetShortestInterval(); // for shortest interval
+
+
+  // set the integration type (not really needed for the default ADAPTIVE)
+  // possible alternative values are  "VEGAS" , "MISER", or "PLAIN"  (MC integration from libMathMore)
+  // "TOYMC" (toy MC integration, work when nuisances exist and they have a constraints pdf)
+  TString integrationType = "";
+
+  // this is needed if using TOYMC
+  if (integrationType.Contains("TOYMC") ) {
+    RooAbsPdf * nuisPdf = RooStats::MakeNuisancePdf(mc, "nuisance_pdf");
+    if (nuisPdf) bayesianCalc.ForceNuisancePdf(*nuisPdf);
+  }
+
+  bayesianCalc.SetIntegrationType(integrationType);
+
+  // compute interval by scanning the posterior function
+  // it is done by default when computing shortest intervals
+  bayesianCalc.SetScanOfPosterior(100);
+
+  RooRealVar* firstPOI = (RooRealVar*) mc.GetParametersOfInterest()->first();
+
+  SimpleInterval* interval = bayesianCalc.GetInterval();
+  if (!interval) {
+     cout << "Error computing Bayesian interval - exit " << endl;
+     return;
+  }
+
+
+  double lowerLimit = interval->LowerLimit();
+  double upperLimit = interval->UpperLimit();
+
+  cout << "\n90% interval on " <<firstPOI->GetName()<<" is : ["<<
+    lowerLimit << ", "<<
+    upperLimit <<"] "<<endl;
+
+  // draw plot of posterior function
+
+  TCanvas* c_bc = new TCanvas("IntervalPlot");
+
+  RooPlot * plot_bc = bayesianCalc.GetPosteriorPlot();
+  if (plot_bc) plot_bc->Draw();
+
+  // // lim += interval->UpperLimit(*firstPOI);
+  // //lim += interval->UpperLimit();
+  // lim += upperLimit;
+
+  */  //  --- End Bayesian Calculator
+
+  // ---- Profile Likelihood Calculator
+  ProfileLikelihoodCalculator pl(*data,mc);
+  pl.SetConfidenceLevel(confidenceLevel); // 68.3% interval
+  LikelihoodInterval* interval = pl.GetInterval();
+
+  // find the interval on the first Parameter of Interest (nsig)
+  RooRealVar* firstPOI = (RooRealVar*) mc.GetParametersOfInterest()->first();
+
+  double lowerLimit = interval->LowerLimit(*firstPOI);
+  double upperLimit = interval->UpperLimit(*firstPOI);
+
+  cout << "\n90% interval on " <<firstPOI->GetName()<<" is : ["<<
+    lowerLimit << ", "<<
+    upperLimit <<"] "<<endl;
+  //  --- End Profile Likelihood Calculator
+
   frame->Draw();
 
   return;
