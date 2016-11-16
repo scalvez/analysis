@@ -69,7 +69,10 @@ int main(int argc, char* argv[]) {
 
   // Vector holding the 90 % rejected number of signal events for all pseudo-experiments
   // std::vector<double> s_90;
-  double step_size = 0.5;
+
+  //State of the code as of 10 Nov. : integral fails to reach the 90% for reasonnable step_size (1 or 0.5)
+
+  double step_size = 1;
   TString filename = Form("output_%f.root",step_size);
   std::cout << " filename " << filename << std::endl;
 
@@ -127,12 +130,12 @@ int main(int argc, char* argv[]) {
 
         //Denominator of the probability
         double denom = 0;
-        double step_size_bis_s = 1;
+        double step_size_bis_s = 0.5;
         double step_size_bis_b = 1;
-        for(double i_s = 0; i_s<=50/step_size_bis_s; i_s += step_size_bis_s) {
+        for(double i_s = 0; i_s<=40/step_size_bis_s; i_s += step_size_bis_s) {
         // for(double i_s = 0; i_s<=200; ++i_s) {
           // double i_s_eff = i_s/10;
-          for(double i_b = 0; i_b<=200/step_size_bis_b; i_b += step_size_bis_b) {
+          for(double i_b = 0; i_b<=50/step_size_bis_b; i_b += step_size_bis_b) {
           // for(double i_b = 0; i_b<=1000; ++i_b) {
           // double i_b_eff = i_b/10;
               denom += proba_bayes(i_s,i_b,pdf_S,pdf_B,data)*p0_S(i_s)*p0_B(i_b);
@@ -154,7 +157,7 @@ int main(int argc, char* argv[]) {
         g_p->GetPoint(count-1,tmp_x,tmp_y);
         tot_prob += std::abs(tmp_y+p)/2*step_size;
         g_p_integral->SetPoint(count-1,s,tot_prob);
-        h_p_int->Fill(s-1,std::abs(tmp_y+p)/2);
+        h_p_int->Fill(s-step_size,std::abs(tmp_y+p)/2);
       }
       std::cout << "                                          Summed Probability = " << tot_prob << std::endl;
       count++;
