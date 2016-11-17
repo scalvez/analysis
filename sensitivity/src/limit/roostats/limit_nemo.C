@@ -7,6 +7,7 @@
 #include "RooAbsPdf.h"
 #include "RooStats/HypoTestResult.h"
 #include "RooRealVar.h"
+#include "RooArgSet.h"
 #include "RooPlot.h"
 #include "RooRandom.h"
 #include "RooDataSet.h"
@@ -60,13 +61,18 @@ void limit_nemo() {
   TFile *infile_bkg4 = TFile::Open("$SW_WORK_DIR/analysis/sensitivity/data/pdf/radon_pdf_trunc.root");
   TH1D* bkg4 = (TH1D*)infile_bkg4->Get("2e_electrons_energy_sum");
 
+  // TString calculator = "bayesian";
+  // TString calculator = "plc";
+  // TString calculator = "mcmc";
+  TString calculator = "fc";
+
   std::vector<double> limit_vector;
   double lim = 0;
   double count_lim = 0;
 
-  double n_pseudo = 100;
+  double n_pseudo = 10;
   for(auto i = 1; i<=n_pseudo; ++i) {
-    if(!i%10)
+    if(i%10==0)
       std::cout << std::endl << " -------Pseudo experiment n° " << i << std::endl;
 
     // Recreate all variables, model and workspace, otherwise initialization issue
@@ -84,6 +90,12 @@ void limit_nemo() {
     RooHistPdf hist_pdf_bkg2("hist_pdf_bkg2","hist_pdf_bkg2",E,bkg2_hist,0);
     RooHistPdf hist_pdf_bkg3("hist_pdf_bkg3","hist_pdf_bkg3",E,bkg3_hist,0);
     RooHistPdf hist_pdf_bkg4("hist_pdf_bkg4","hist_pdf_bkg4",E,bkg4_hist,0);
+
+    // RooRealVar nsig("nsig","fitted number of 0nu events",0,0,50);
+    // RooRealVar nbkg1("nbkg1","fitted number of 2nu events",34,0,200);
+    // RooRealVar nbkg2("nbkg2","fitted number of tl208 events",0.06,0,200);
+    // RooRealVar nbkg3("nbkg3","fitted number of bi214 events",0.34,0,200);
+    // RooRealVar nbkg4("nbkg4","fitted number of radon events",0.64,0,200);
 
     RooRealVar nsig("nsig","fitted number of 0nu events",0,0,50);
     RooRealVar nbkg1("nbkg1","fitted number of 2nu events",34,0,200);
@@ -111,31 +123,17 @@ void limit_nemo() {
 
     RooFitResult * fit_res = model.fitTo(*data, RooFit::Save(true), RooFit::Minimizer("Minuit","Migrad"));
 
-    // fit_res->Print();
-
-    // std::cout << " test " << nsig << std::endl;
-    // model.plotOn(frame);
-    // frame->Draw();
-
     RooWorkspace *w = new RooWorkspace("w","workspace") ;
     w->import(model) ;
     w->import(*data) ;
     // w->Print() ;
 
-    // RooRealVar * test = w->var("nsig");
-    // test->plotOn(frame);
-    // std::cout << "test " << test << std::endl;
-
-    // RooAbsPdf * pdf = w.pdf("model");
-
     RooStats::ModelConfig mc("ModelConfig",w);
     mc.SetPdf(model);
     mc.SetParametersOfInterest(*w->var("nsig"));
     mc.SetObservables(*w->var("E"));
-    w->defineSet("nuisParams","nbkg1");
-    // w->defineSet("nuisParams","nbkg2");
-    // w->defineSet("nuisParams","nbkg3");
-    // w->defineSet("nuisParams","nbkg4");
+    RooArgSet nuisance_pars(nbkg1,nbkg2,nbkg3,nbkg4);
+    w->defineSet("nuisParams",nuisance_pars);
 
     mc.SetNuisanceParameters(*w->set("nuisParams"));
 
@@ -143,7 +141,11 @@ void limit_nemo() {
 
     double confidenceLevel = 0.9;
 
-    /*// Bayesian calculator
+    double lowerLimit = 0;
+    double upperLimit = 0;
+
+      if(calculator.EqualTo("bayesian")) {
+    // Bayesian calculator
        BayesianCalculator bayesianCalc(*data,mc);
        bayesianCalc.SetConfidenceLevel(confidenceLevel);
 
@@ -178,8 +180,8 @@ void limit_nemo() {
        return;
        }
 
-       double lowerLimit = interval->LowerLimit();
-       double upperLimit = interval->UpperLimit();
+       lowerLimit = interval->LowerLimit();
+       upperLimit = interval->UpperLimit();
 
        cout << "\n90% interval on " <<firstPOI->GetName()<<" is : ["<<
        lowerLimit << ", "<<
@@ -194,27 +196,27 @@ void limit_nemo() {
        if (plot_bc) plot_bc->Draw();
        }
 
-    */        //  --- End Bayesian Calculator
+    }        //  --- End Bayesian Calculator
+    else if(calculator.EqualTo("plc")) {
+      // ---- Profile Likelihood Calculator
+      ProfileLikelihoodCalculator pl(*data,mc);
+      pl.SetConfidenceLevel(confidenceLevel); // 68.3% interval
+      LikelihoodInterval* interval = pl.GetInterval();
 
-    /*    // ---- Profile Likelihood Calculator
-          ProfileLikelihoodCalculator pl(*data,mc);
-          pl.SetConfidenceLevel(confidenceLevel); // 68.3% interval
-          LikelihoodInterval* interval = pl.GetInterval();
+      // find the interval on the first Parameter of Interest (nsig)
+      RooRealVar* firstPOI = (RooRealVar*) mc.GetParametersOfInterest()->first();
 
-          // find the interval on the first Parameter of Interest (nsig)
-          RooRealVar* firstPOI = (RooRealVar*) mc.GetParametersOfInterest()->first();
+       lowerLimit = interval->LowerLimit(*firstPOI);
+       upperLimit = interval->UpperLimit(*firstPOI);
 
-          double lowerLimit = interval->LowerLimit(*firstPOI);
-          double upperLimit = interval->UpperLimit(*firstPOI);
+      cout << "\n90% interval on " <<firstPOI->GetName()<<" is : ["<<
+        lowerLimit << ", "<<
+        upperLimit <<"] "<<endl;
 
-          cout << "\n90% interval on " <<firstPOI->GetName()<<" is : ["<<
-          lowerLimit << ", "<<
-          upperLimit <<"] "<<endl;
-
-*/          //  --- End Profile Likelihood Calculator
-
-    /*    //Bayesian MCMC
-    // this proposal function seems fairly robust
+    } //  --- End Profile Likelihood Calculator
+    else if (calculator.EqualTo("mcmc")) {
+      //Bayesian MCMC
+      // this proposal function seems fairly robust
     SequentialProposal sp(0.1);
 
     MCMCCalculator mcmc(*data,mc);
@@ -243,9 +245,9 @@ void limit_nemo() {
     // MCMCIntervalPlot plot2(*interval);
     // plot2.Draw();
 
-    double upperLimit = interval->UpperLimit(*firstPOI);
-    */    // End MCMC
-
+    upperLimit = interval->UpperLimit(*firstPOI);
+    }// End MCMC
+    else if (calculator.EqualTo("fc")) {
     // Feldman-Cousins
 
     FeldmanCousins fc(*data, mc);
@@ -264,16 +266,21 @@ void limit_nemo() {
     interval->LowerLimit(*firstPOI) << " , "  <<
     interval->UpperLimit(*firstPOI) << "]" << endl;
 
-    double upperLimit = interval->UpperLimit(*firstPOI);
+    upperLimit = interval->UpperLimit(*firstPOI);
 
-    // End of Feldman-Cousins
+    }    // End of Feldman-Cousins
+    else {
+      std::cout << "No Calculator specified " << std::endl;
+      return;
+    }
+
     if(upperLimit == upperLimit) {
       count_lim++;
       lim += upperLimit;
       limit_vector.push_back(upperLimit);
     }
 
-  frame->Draw();
+    frame->Draw();
   }
 
   std::cout << " average limit is " << lim/count_lim << std::endl;
