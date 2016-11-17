@@ -146,14 +146,16 @@ int main(int argc, char* argv[]) {
     //   Read the instructions in collie/io/include/CollieIOFile.hh if you're in doubt
     // cfile->createFlatSigSystematic("Lumi",0.01,0.01,m);
 
+    double eff_error = 0.2;
+
     //test
-    cfile->createFlatSigSystematic("Eff",0.05,0.05,m);
+    cfile->createFlatSigSystematic("Eff",eff_error,eff_error,m);
 
     // // cfile->createFlatBkgdSystematic(0,"Lumi",0.01,0.01,m);
-    cfile->createFlatBkgdSystematic(0,"Eff",0.05,0.05,m);
-    cfile->createFlatBkgdSystematic(1,"Eff",0.05,0.05,m);
-    cfile->createFlatBkgdSystematic(2,"Eff",0.05,0.05,m);
-    cfile->createFlatBkgdSystematic(3,"Eff",0.05,0.05,m);
+    cfile->createFlatBkgdSystematic(0,"Eff",eff_error,eff_error,m);
+    cfile->createFlatBkgdSystematic(1,"Eff",eff_error,eff_error,m);
+    cfile->createFlatBkgdSystematic(2,"Eff",eff_error,eff_error,m);
+    cfile->createFlatBkgdSystematic(3,"Eff",eff_error,eff_error,m);
 
     // Example of systematics input as histograms, can be flat or function of final variable
     //==>Use this method if you're inputing fractional shape systematics
@@ -170,10 +172,13 @@ int main(int argc, char* argv[]) {
 
     //  ==>Option to remove prior constraint on systematic uncertainty PDF.
     //     Floating makes a parameter a free parameter in the fit.
-    //
-    //  cfile->setBkgdFloatFlag(0,"Eff",true,m);
-    //  cfile->setBkgdFloatFlag(1,"Eff",true,m);
-    //  cfile->setSigFloatFlag("Eff",true,m);
+
+    cfile->setBkgdFloatFlag(0,"Eff",true,m);
+    cfile->setBkgdFloatFlag(1,"Eff",true,m);
+    cfile->setBkgdFloatFlag(2,"Eff",true,m);
+    cfile->setBkgdFloatFlag(3,"Eff",true,m);
+
+    cfile->setSigFloatFlag("Eff",true,m);
 
 
     //  ==>For large uncertainties (eg, >30%) use a log-normal PDF to avoid
