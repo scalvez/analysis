@@ -28,6 +28,7 @@ double get_number_of_excluded_events(const double number_of_events_)
 
 
 void quick_fc() {
+  std::cout << " number of exc events " << get_number_of_excluded_events(0.0) << std::endl;
 
   const double mass = 7.;
   const double exposure_sec = 2.5 * 3.14e7;
@@ -94,7 +95,7 @@ void quick_fc() {
   h_2nu->Scale(eff_2nu * mass * exposure_y * Na * log(2) / M_Se / halflife_2nu);
   h_tl208->Scale(eff_tl208 * 2e-6 * mass * exposure_sec);
   h_bi214->Scale(eff_bi214 * 10e-6 * mass * exposure_sec);
-  h_radon->Scale(eff_radon * 10e-6 * tracker_volume * exposure_sec);
+  h_radon->Scale(eff_radon * 150e-6 * tracker_volume * exposure_sec);
 
   std::cout << " Counts : " << std::endl
             << " 2nu   : " << eff_2nu * mass * exposure_y * Na * log(2) / M_Se / halflife_2nu << std::endl
@@ -103,122 +104,26 @@ void quick_fc() {
             << " radon : " << eff_radon * 150e-6 * tracker_volume * exposure_sec << std::endl;
 
   TGraph *g_hl = new TGraph();
-  TGraph *g_hl_radon = new TGraph();
-  TGraph *g_hl_radon_rel = new TGraph();
-  TGraph *g_count_radon = new TGraph();
-  TGraph *g_count_radon_window = new TGraph();
+  TGraph *g_count = new TGraph();
 
-  double max_hl_no_radon = 1;
-  for(unsigned int i_radon=0; i_radon<=50;++i_radon) {
-    double max_hl = 0;
-    double max_hl_radon_count = 0;
-    for(unsigned int i = 40; i <= 64; ++i) {
-      double n_bkg = h_2nu->Integral(i,64) + h_tl208->Integral(i,64) + h_bi214->Integral(i,64) + h_radon->Integral(i,64)*i_radon;
-      double halflife = h_0nu->Integral(i,64) * mass * exposure_y * Na * log(2) / M_Se / get_number_of_excluded_events(n_bkg);
-      if(halflife>max_hl) {
-        max_hl=halflife;
-        max_hl_radon_count = h_radon->Integral(i,64)*i_radon;
-        if(i_radon==0)
-          max_hl_no_radon = halflife;
-      }
-      // g_hl->SetPoint(i-40,h_2nu->GetBinLowEdge(i),halflife);
+  double max_hl = 0;
+  for(unsigned int i = 40; i <= 64; ++i) {
+    double n_bkg = h_2nu->Integral(i,64) + h_tl208->Integral(i,64) + h_bi214->Integral(i,64) + h_radon->Integral(i,64);
+    double halflife = h_0nu->Integral(i,64) * mass * exposure_y * Na * log(2) / M_Se / get_number_of_excluded_events(n_bkg);
+    if(halflife>max_hl) {
+      max_hl=halflife;
     }
-    g_hl_radon->SetPoint(i_radon,i_radon*10,max_hl/1e24);
-    g_hl_radon_rel->SetPoint(i_radon,i_radon*10,max_hl/max_hl_no_radon);
-    g_count_radon->SetPoint(i_radon,i_radon*10,max_hl_radon_count);
-    g_count_radon_window->SetPoint(i_radon,i_radon*10,i_radon*h_radon->Integral(57,64));
+    g_hl->SetPoint(i-40,h_2nu->GetBinLowEdge(i),halflife);
+    g_count->SetPoint(i-40,h_2nu->GetBinLowEdge(i),n_bkg);
   }
 
-  TGraph *g_hl_radon_exp_0 = new TGraph();
-  TGraph *g_hl_radon_exp_50 = new TGraph();
-  TGraph *g_hl_radon_exp_150 = new TGraph();
-  TGraph *g_hl_radon_exp_500 = new TGraph();
+  g_hl->SetTitle("; contamination [#muBq/m^{3}];T_{1/2}^{0#nu} [10^{24} y]");
+  g_hl->SetLineColor(kBlue+1);
+  g_hl->SetLineWidth(2);
 
-  vector <double> exposure_factor;
-  exposure_factor.push_back(1/17.5);
-  exposure_factor.push_back(5/17.5);
-  exposure_factor.push_back(1);
-  exposure_factor.push_back(50/17.5);
-  exposure_factor.push_back(100/17.5);
-  exposure_factor.push_back(150/17.5);
-  exposure_factor.push_back(250/17.5);
-  exposure_factor.push_back(350/17.5);
-  exposure_factor.push_back(500/17.5);
-
-  std::vector<double> hl_0 ;
-  //0 muBq
-  for(unsigned int i_exp=0;i_exp<exposure_factor.size();++i_exp) {
-    double max_hl = 0;
-    for(unsigned int i = 40; i <= 64; ++i) {
-      double n_bkg = h_2nu->Integral(i,64) + h_tl208->Integral(i,64) + h_bi214->Integral(i,64) ;
-      n_bkg = n_bkg * exposure_factor[i_exp];
-      double halflife = h_0nu->Integral(i,64) * mass * exposure_y * exposure_factor[i_exp] * Na * log(2) / M_Se / get_number_of_excluded_events(n_bkg);
-      if(halflife>max_hl)
-        max_hl=halflife;
-    }
-    hl_0.push_back(max_hl);
-  }
-
-  for(unsigned int i_exp=0;i_exp<exposure_factor.size();++i_exp)
-    g_hl_radon_exp_0->SetPoint(i_exp,17.5*exposure_factor[i_exp],hl_0[i_exp]/hl_0[exposure_factor.size()-1]);
-
-  //50 muBq
-  for(unsigned int i_exp=0;i_exp<exposure_factor.size();++i_exp) {
-    double max_hl = 0;
-    for(unsigned int i = 40; i <= 64; ++i) {
-      double n_bkg = h_2nu->Integral(i,64) + h_tl208->Integral(i,64) + h_bi214->Integral(i,64) + h_radon->Integral(i,64)*5;
-      n_bkg = n_bkg * exposure_factor[i_exp];
-      double halflife = h_0nu->Integral(i,64) * mass * exposure_y * exposure_factor[i_exp] * Na * log(2) / M_Se / get_number_of_excluded_events(n_bkg);
-      if(halflife>max_hl)
-        max_hl=halflife;
-    }
-    // g_hl_radon_exp_50->SetPoint(i_exp,17.5*exposure_factor[i_exp],max_hl/1e25);
-    g_hl_radon_exp_50->SetPoint(i_exp,17.5*exposure_factor[i_exp],max_hl/hl_0[exposure_factor.size()-1]);
-  }
-
-  //150 muBq
-  for(unsigned int i_exp=0;i_exp<exposure_factor.size();++i_exp) {
-    double max_hl = 0;
-    for(unsigned int i = 40; i <= 64; ++i) {
-      double n_bkg = h_2nu->Integral(i,64) + h_tl208->Integral(i,64) + h_bi214->Integral(i,64) + h_radon->Integral(i,64)*15;
-      n_bkg = n_bkg * exposure_factor[i_exp];
-      double halflife = h_0nu->Integral(i,64) * mass * exposure_y * exposure_factor[i_exp] * Na * log(2) / M_Se / get_number_of_excluded_events(n_bkg);
-      if(halflife>max_hl)
-        max_hl=halflife;
-    }
-    // g_hl_radon_exp_150->SetPoint(i_exp,17.5*exposure_factor[i_exp],max_hl/1e25);
-    g_hl_radon_exp_150->SetPoint(i_exp,17.5*exposure_factor[i_exp],max_hl/hl_0[exposure_factor.size()-1]);
-  }
-
-  //500 muBq
-  for(unsigned int i_exp=0;i_exp<exposure_factor.size();++i_exp) {
-    double max_hl = 0;
-    for(unsigned int i = 40; i <= 64; ++i) {
-      double n_bkg = h_2nu->Integral(i,64) + h_tl208->Integral(i,64) + h_bi214->Integral(i,64) + h_radon->Integral(i,64)*50;
-      n_bkg = n_bkg * exposure_factor[i_exp];
-      double halflife = h_0nu->Integral(i,64) * mass * exposure_y * exposure_factor[i_exp] * Na * log(2) / M_Se / get_number_of_excluded_events(n_bkg);
-      if(halflife>max_hl)
-        max_hl=halflife;
-    }
-    // g_hl_radon_exp_500->SetPoint(i_exp,17.5*exposure_factor[i_exp],max_hl/1e25);
-    g_hl_radon_exp_500->SetPoint(i_exp,17.5*exposure_factor[i_exp],max_hl/hl_0[exposure_factor.size()-1]);
-  }
-
-  g_hl_radon->SetTitle(";Radon contamination [#muBq/m^{3}];T_{1/2}^{0#nu} [10^{24} y]");
-  g_hl_radon->SetLineColor(kBlue+1);
-  g_hl_radon->SetLineWidth(2);
-
-  g_hl_radon_rel->SetTitle(";Radon contamination [#muBq/m^{3}];Relative sensitivity loss [%]");
-  g_hl_radon_rel->SetLineColor(kBlue+1);
-  g_hl_radon_rel->SetLineWidth(2);
-
-  g_count_radon->SetTitle(";Radon contamination [#muBq/m^{3}];Radon events in the ROI");
-  g_count_radon->SetLineColor(kBlue+1);
-  g_count_radon->SetLineWidth(2);
-
-  g_count_radon_window->SetTitle(";Radon contamination [#muBq/m^{3}];Radon events in the [2.8,3.2]MeV window");
-  g_count_radon_window->SetLineColor(kBlue+1);
-  g_count_radon_window->SetLineWidth(2);
+  g_count->SetTitle(";Radon contamination [#muBq/m^{3}];Radon events in the ROI");
+  g_count->SetLineColor(kBlue+1);
+  g_count->SetLineWidth(2);
 
   h_0nu->SetName("0nu");
   h_2nu->SetName("2nu");
@@ -226,50 +131,11 @@ void quick_fc() {
   h_bi214->SetName("bi214");
   h_radon->SetName("radon");
 
-  // g_hl_radon_exp_0->SetTitle(";Exposure [kg.y];T_{1/2}^{0#nu} [10^{25} y]");
-  g_hl_radon_exp_0->SetTitle(";Exposure [kg.y];Sensitivity (arbitrary units)");
-  g_hl_radon_exp_0->SetLineColor(kBlack);
-  g_hl_radon_exp_0->SetLineWidth(2);
-
-  g_hl_radon_exp_50->SetTitle(";Exposure [kg.y];Sensitivity (arbitrary units)");
-  g_hl_radon_exp_50->SetLineColor(kGreen+1);
-  g_hl_radon_exp_50->SetLineWidth(2);
-
-  g_hl_radon_exp_150->SetTitle(";Exposure [kg.y];Sensitivity (arbitrary units)");
-  g_hl_radon_exp_150->SetLineColor(kBlue);
-  g_hl_radon_exp_150->SetLineWidth(2);
-
-  g_hl_radon_exp_500->SetTitle(";Exposure [kg.y];Sensitivity (arbitrary units)");
-  g_hl_radon_exp_500->SetLineColor(kRed);
-  g_hl_radon_exp_500->SetLineWidth(2);
-
   g_hl->SetName("hl");
   g_hl->Write();
 
-  g_hl_radon->SetName("hl_radon");
-  g_hl_radon->Write();
-
-  g_hl_radon_rel->SetName("hl_radon_rel");
-  g_hl_radon_rel->Write();
-
-  g_count_radon->SetName("radon_count");
-  g_count_radon->Write();
-
-  g_count_radon_window->SetName("radon_count_window");
-  g_count_radon_window->Write();
-
-  g_hl_radon_exp_0->SetName("hl_radon_exp_0");
-  g_hl_radon_exp_0->Write();
-
-  g_hl_radon_exp_50->SetName("hl_radon_exp_50");
-  g_hl_radon_exp_50->Write();
-
-  g_hl_radon_exp_150->SetName("hl_radon_exp_150");
-  g_hl_radon_exp_150->Write();
-
-  g_hl_radon_exp_500->SetName("hl_radon_exp_500");
-  g_hl_radon_exp_500->Write();
-
+  g_count->SetName("count");
+  g_count->Write();
 
   h_0nu->Write();
   h_2nu->Write();
