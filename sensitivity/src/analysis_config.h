@@ -8,7 +8,7 @@
 #include <map>
 
 const bool generate_pdf = true;
-const bool generate_pseudo = true;
+const bool generate_pseudo = false;
 const bool poisson_pseudo = false;
 const unsigned int number_of_pseudo_experiments = 1;
 const bool fit = false;
@@ -35,18 +35,17 @@ const bool print_fits = false;
 
 // const TCut good_internal_probability_cut = prob_cut;
 
-const std::map < std::string, double > isotope_activity = {
-  {"0nu",0},
-  {"2nu",9},
-  {"bi214",10e-6},
-  {"radon",150e-6},
-  {"tl208",2e-6}
-};
-
 // const std::map < std::string, double > isotope_activity = {
 //   {"0nu",0},
-//   {"2nu",9}
+//   {"2nu",9},
+//   {"bi214",10e-6},
+//   {"radon",150e-6},
+//   {"tl208",2e-6}
 // };
+
+const std::map < std::string, double > isotope_activity = {
+  {"0nu",0},
+};
 
 // const std::map < std::string, double > isotope_activity = {
 //   {"2nu",9},

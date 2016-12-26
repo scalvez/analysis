@@ -146,7 +146,6 @@ void calcLimit(TString outFile, TString inList, TString m){
   // Determine if you want fitted pseudo-experiments in the tests
   fitTest.testPE(true);
 
-
   //extract the total number of masspoints in the file
   int len=loaders[0].getNMasspoints();
   if (len<=0) {

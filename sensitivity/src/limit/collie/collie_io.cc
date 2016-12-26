@@ -40,6 +40,8 @@ int main(int argc, char* argv[]) {
 
   cfile->setInputHist(Xmin,Xmax,Nbins);
 
+  // cfile->setInputHist2D(Xmin,Xmax,Nbins);
+
   // Option to define physical cutoffs where events should not exist (in terms of your historam range)
   //
   //  cfile->setCutoffs(0.0,1.0);
@@ -146,7 +148,7 @@ int main(int argc, char* argv[]) {
     //   Read the instructions in collie/io/include/CollieIOFile.hh if you're in doubt
     // cfile->createFlatSigSystematic("Lumi",0.01,0.01,m);
 
-    double eff_error = 0.2;
+    double eff_error = 0.05;
 
     //test
     cfile->createFlatSigSystematic("Eff",eff_error,eff_error,m);
@@ -173,6 +175,7 @@ int main(int argc, char* argv[]) {
     //  ==>Option to remove prior constraint on systematic uncertainty PDF.
     //     Floating makes a parameter a free parameter in the fit.
 
+    // The systematics are still taken into account
     cfile->setBkgdFloatFlag(0,"Eff",true,m);
     cfile->setBkgdFloatFlag(1,"Eff",true,m);
     cfile->setBkgdFloatFlag(2,"Eff",true,m);

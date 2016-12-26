@@ -61,16 +61,17 @@ void limit_nemo() {
   TFile *infile_bkg4 = TFile::Open("$SW_WORK_DIR/analysis/sensitivity/data/pdf/radon_pdf_trunc.root");
   TH1D* bkg4 = (TH1D*)infile_bkg4->Get("2e_electrons_energy_sum");
 
+  TString calculator = "simple_fc";
   // TString calculator = "bayesian";
   // TString calculator = "plc";
   // TString calculator = "mcmc";
-  TString calculator = "fc";
+  // TString calculator = "fc";
 
   std::vector<double> limit_vector;
   double lim = 0;
   double count_lim = 0;
 
-  double n_pseudo = 10;
+  double n_pseudo = 100;
   for(auto i = 1; i<=n_pseudo; ++i) {
     if(i%10==0)
       std::cout << std::endl << " -------Pseudo experiment n° " << i << std::endl;
@@ -143,8 +144,15 @@ void limit_nemo() {
 
     double lowerLimit = 0;
     double upperLimit = 0;
-
-      if(calculator.EqualTo("bayesian")) {
+    if(calculator.EqualTo("simple_fc")) {
+      RooDataHist *h_data = data->binnedClone();
+      double n_window = h_data->sumEntries("E>2.7");
+      double n_exp = h_data->sumEntries("E>2.7");
+      TFeldmanCousins *simple_fc = new TFeldmanCousins(0.9);
+      lowerLimit = simple_fc->CalculateLowerLimit(n_window,n_exp);
+      upperLimit = simple_fc->CalculateUpperLimit(n_window,n_exp);
+    }
+    else if(calculator.EqualTo("bayesian")) {
     // Bayesian calculator
        BayesianCalculator bayesianCalc(*data,mc);
        bayesianCalc.SetConfidenceLevel(confidenceLevel);
@@ -288,5 +296,8 @@ void limit_nemo() {
 
   std::sort(limit_vector.begin(),limit_vector.end());
   std::cout << " median is " << limit_vector[int(limit_vector.size()/2)] << std::endl;
+
+  for(auto i=0; i<limit_vector.size();++i)
+    std::cout << limit_vector[i] << std::endl;
   return;
 }

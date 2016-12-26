@@ -96,7 +96,7 @@ void limit_gerda_model() {
 
   double confidenceLevel = 0.9;
 
-  /*
+
   ProfileLikelihoodCalculator pl(*data,mc);
   pl.SetConfidenceLevel(confidenceLevel); // 68.3% interval
   LikelihoodInterval* interval = pl.GetInterval();
@@ -115,7 +115,7 @@ void limit_gerda_model() {
   // //plot->SetRange(0,100);  // possible eventually to change ranges
   // plot->SetNPoints(50);  // do not use too many points, it could become very slow for some models
   // plot->Draw("");  // use option TF1 if too slow (plot.Draw("tf1")
-  */
+
 
   // Feldman-Cousing didn't appear to work
 

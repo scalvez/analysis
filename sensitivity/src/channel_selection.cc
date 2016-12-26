@@ -27,8 +27,11 @@ void channel_selection(TString isotope, std::vector<TString> quantities_pdf, boo
   // const std::string topology_2e2g = "2e2g";
   // const std::string topology_2e3g = "2e3g";
 
-  TString input_file = "../data/trees/" + isotope + "/merge.root";
-  TString output_file = "../data/trees/" + isotope + "_pdf.root";
+  // TString input_file = "../data/trees/" + isotope + "/merge.root";
+  // TString output_file = "../data/trees/" + isotope + "_pdf.root";
+
+  TString input_file = "$SW_WORK_DIR/test_data_selection/" + isotope + "/root/merge.root";
+  TString output_file = "/tmp/calvez/snemo.d/test_data_selection/test_pdf.root";
 
   TFile *f = TFile::Open(input_file);
   TTree *tree = (TTree*)f->Get("snemodata");
@@ -83,6 +86,8 @@ void channel_selection(TString isotope, std::vector<TString> quantities_pdf, boo
     else
     tree->Project(qty,qty,"2e_electrons_internal_probability >= 0.04 && 2e_electrons_vertices_distance_y <= 60 && 2e_electrons_vertices_distance_z <= 70 && 2e_electrons_vertex_location == 0");
 
+    // tree->Project(qty,qty,"2e_electrons_internal_probability >= 0.0");
+
     // h->ClearUnderflowAndOverflow(); Unavailable with this version of ROOT
     h->SetBinContent(0,0);
     h->SetBinContent(nbins+1,0);
@@ -101,8 +106,8 @@ void channel_selection(TString isotope, std::vector<TString> quantities_pdf, boo
 
     h->Sumw2();
 
-    if(normalize)
-      h->Scale(1./h->Integral(1,h->GetXaxis()->GetNbins()));
+    // if(normalize)
+    //   h->Scale(1./h->Integral(1,h->GetXaxis()->GetNbins()));
     h->SetDrawOption("APL");
     h->Write();
 
