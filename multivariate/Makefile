@@ -142,12 +142,18 @@ IOHEADERS += ${IO_INC}/InfoForEfficiencyCalculation.hh
 ALLSRCS := ${LIMITSRCS} ${IOSRCS}
 ALLOBJS :=$(patsubst %.cpp,%.o,$(patsubst %.cxx,%.o,$(patsubst %.cc,%.o,${ALLSRCS})))
 
-all: collie_io_bdt.exe collie_io_spectra.exe limit_calc.exe
+all: collie_io_bdt.exe collie_io_spectra.exe collie_io_bdt_simple.exe collie_io_spectra_simple.exe limit_calc.exe
 
 collie_io_bdt.exe: collie_io_bdt.o
 	gcc -o $@ $^ ${CXXFLAGS} ${LDFLAGS} ${LOADLIBS} ${EXAMPLELIBS} ${SEARCHDIRS} ${ROOTLIBS}
 
 collie_io_spectra.exe: collie_io_spectra.o
+	gcc -o $@ $^ ${CXXFLAGS} ${LDFLAGS} ${LOADLIBS} ${EXAMPLELIBS} ${SEARCHDIRS} ${ROOTLIBS}
+
+collie_io_bdt_simple.exe: collie_io_bdt_simple.o
+	gcc -o $@ $^ ${CXXFLAGS} ${LDFLAGS} ${LOADLIBS} ${EXAMPLELIBS} ${SEARCHDIRS} ${ROOTLIBS}
+
+collie_io_spectra_simple.exe: collie_io_spectra_simple.o
 	gcc -o $@ $^ ${CXXFLAGS} ${LDFLAGS} ${LOADLIBS} ${EXAMPLELIBS} ${SEARCHDIRS} ${ROOTLIBS}
 
 limit_calc.exe: limit_calc.o
