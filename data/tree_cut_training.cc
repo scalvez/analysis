@@ -11,9 +11,9 @@ void tree_cut_training() {
   // // TString output_file = "./trees_source_2e_training/0nu.root";
   // TString output_file = "./trees_topo_cuts_2e_training/0nu.root";
 
-  TString input_file = "./raw_trees/2nu/merge.root";
-  TString output_file = "./trees_source_2e_training/2nu_500k.root";
-  // TString output_file = "./trees_topo_cuts_2e_training/2nu.root";
+  // TString input_file = "./raw_trees/2nu/merge.root";
+  // TString output_file = "./trees_source_2e_training/2nu_500k.root";
+  // // TString output_file = "./trees_topo_cuts_2e_training/2nu.root";
 
   // TString input_file = "./raw_trees/tl208/merge.root";
   // // TString output_file = "./trees_source_2e_training/tl208.root";
@@ -26,6 +26,11 @@ void tree_cut_training() {
   // TString input_file = "./raw_trees/radon/merge.root";
   // // TString output_file = "./trees_source_2e_training/radon.root";
   // TString output_file = "./trees_topo_cuts_2e_training/radon.root";
+
+  TString input_file = "./raw_trees/2nu_full/merge.root";
+  TString output_file = "./trees_source_2e_training/2nu_full_1M.root";
+  // TString output_file = "./tmp_eff_full.root";
+  // TString output_file = "./trees_topo_cuts_2e_training/2nu.root";
 
   TFile *f = TFile::Open(input_file);
   TTree *tree = (TTree*)f->Get("snemodata");
@@ -53,25 +58,26 @@ void tree_cut_training() {
   TFile *newfile = new TFile(output_file,"recreate");
   TTree *newtree = tree->CloneTree(0);
   int count = 0;
+
   for (Long64_t i=0;i<nentries; i++) {
     if (i%100000==0)
       std::cout << i << std::endl;
     tree->GetEntry(i);
 
-    //topo
-    if (pint>cut_pint &&
-        delta_y<cut_delta_y &&
-        delta_z<cut_delta_z &&
-        vertex_location==cut_vertex_location) {
-      ++count;
-      newtree->Fill();
-    }
-
-    //source
-    // if (vertex_location==0) {
+    // //topo
+    // if (pint>cut_pint &&
+    //     delta_y<cut_delta_y &&
+    //     delta_z<cut_delta_z &&
+    //     vertex_location==cut_vertex_location) {
     //   ++count;
     //   newtree->Fill();
     // }
+
+    // source
+    if (vertex_location==0) {
+      ++count;
+      newtree->Fill();
+    }
 
     if(count == n_training)
       break;
