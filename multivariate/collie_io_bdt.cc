@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
   bkgdNames.push_back("radon");
   cfile->createChannel(bkgdNames);
 
-  TFile infile("./bdt_scores_counts.root");
+  TFile infile("./tmp_full_bkg/bdt_scores_counts.root");
   TH1D* sig = (TH1D*)infile.Get("0nu");
   TH1D* bkgd1 = (TH1D*)infile.Get("2nu");
   TH1D* bkgd2 = (TH1D*)infile.Get("tl208");

@@ -118,10 +118,6 @@ void sensitivity_simple()
   double best_halflife_limit_roi = 0;
   double Ncount_roi = 0;
   double N_2nu_roi = 0;
-  int lower_window_bin = 0;
-  int upper_window_bin = 0;
-  double lower_window_energy = 0;
-  double upper_window_energy = 0;
 
   unsigned int nbins_roi = h_0nu_roi->GetNbinsX();
 
@@ -166,6 +162,10 @@ void sensitivity_simple()
   double best_halflife_limit_roi_2d = 0;
   double Ncount_roi_2d = 0;
   double N_2nu_roi_2d = 0;
+  int lower_window_bin_roi = 0;
+  int upper_window_bin_roi = 0;
+  double lower_window_energy_roi = 0;
+  double upper_window_energy_roi = 0;
 
   for (unsigned int i = 1; i < h_0nu_roi->GetNbinsX(); ++i) {
     for(unsigned int j = i+1; j <= h_0nu_roi->GetNbinsX(); ++j) {
@@ -179,16 +179,50 @@ void sensitivity_simple()
       if(best_halflife_limit_roi_2d<halflife) {
         Ncount_roi_2d = N_excluded;
         N_2nu_roi_2d = N_2nu;
-        lower_window_bin = i;
-        upper_window_bin = j;
-        lower_window_energy = h_0nu_roi->GetBinLowEdge(i);
-        upper_window_energy = h_0nu_roi->GetBinLowEdge(j);
+        lower_window_bin_roi = i;
+        upper_window_bin_roi = j;
+        lower_window_energy_roi = h_0nu_roi->GetBinLowEdge(i);
+        upper_window_energy_roi = h_0nu_roi->GetBinLowEdge(j);
       }
       best_halflife_limit_roi_2d = std::max(best_halflife_limit_roi_2d, halflife);
       halflife_2d_roi->SetBinContent(i,j,halflife);
     }
   }
-  tmp_eff = h_0nu_roi->Integral(lower_window_bin,upper_window_bin)*conf_sens::eff_0nu_2e;
+  tmp_eff = h_0nu_roi->Integral(lower_window_bin_roi,upper_window_bin_roi)*conf_sens::eff_0nu_2e;
+
+
+  TH2F * halflife_2d_bdt = new TH2F("halflife_2d_bdt","halflife_2d_bdt",h_0nu_bdt->GetNbinsX(), h_0nu_bdt->GetBinLowEdge(1), h_0nu_bdt->GetBinLowEdge(h_0nu_bdt->GetNbinsX()+1),
+                                    h_0nu_bdt->GetNbinsX(), h_0nu_bdt->GetBinLowEdge(1), h_0nu_bdt->GetBinLowEdge(h_0nu_bdt->GetNbinsX()+1));
+
+  double best_halflife_limit_bdt_2d = 0;
+  double Ncount_bdt_2d = 0;
+  double N_2nu_bdt_2d = 0;
+  int lower_window_bin_bdt = 0;
+  int upper_window_bin_bdt = 0;
+  double lower_window_energy_bdt = 0;
+  double upper_window_energy_bdt = 0;
+
+  for (unsigned int i = 1; i < h_0nu_bdt->GetNbinsX(); ++i) {
+    for(unsigned int j = i+1; j <= h_0nu_bdt->GetNbinsX(); ++j) {
+      double eff_0nu = h_0nu_bdt->Integral(i,j); // normalized to 1
+      double eff_2nu = h_2nu_bdt->Integral(i,j); // normalized to 1
+      double N_2nu = eff_2nu * conf_sens::eff_2nu_2e * conf_sens::k_sens / conf_sens::T_2nu;
+
+      double N_excluded = get_number_of_excluded_events(N_2nu);
+      double halflife = eff_0nu * conf_sens::eff_0nu_2e * conf_sens::k_sens / N_excluded;
+
+      if(best_halflife_limit_bdt_2d<halflife) {
+        Ncount_bdt_2d = N_excluded;
+        N_2nu_bdt_2d = N_2nu;
+        lower_window_bin_bdt = i;
+        upper_window_bin_bdt = j;
+        lower_window_energy_bdt = h_0nu_bdt->GetBinLowEdge(i);
+        upper_window_energy_bdt = h_0nu_bdt->GetBinLowEdge(j);
+      }
+      best_halflife_limit_bdt_2d = std::max(best_halflife_limit_bdt_2d, halflife);
+      halflife_2d_bdt->SetBinContent(i,j,halflife);
+    }
+  }
 
   // bdt_significance->Draw("AP");
   bdt_significance->SetName("bdt_significance_norm");
@@ -254,24 +288,30 @@ void sensitivity_simple()
   std::cout << "      Signal efficiency : " << h_0nu_bdt->Integral(best_bdt_cut_bin,h_0nu_bdt->GetNbinsX())/h_0nu_bdt->Integral(0, h_0nu_bdt->GetNbinsX()) << std::endl;// << "   Background efficiency : " << h_2nu_bdt->Integral(best_bdt_cut_bin,h_2nu_bdt->GetNbinsX())/h_2nu_bdt->Integral(0, h_2nu_bdt->GetNbinsX()) << std::endl;
   // std::cout << "     ROI    :  "  << best_halflife_limit_roi << "  ,   N_bg = " << Ncount_roi
   //           << "  (N_2nu = " << N_2nu_roi << ", N_tl = " << N_tl_roi << ", N_bi = " << N_bi_roi << ", N_radon = " << N_radon_roi << ")" << std::endl;
+  std::cout << "     BDT 2D :  "  << best_halflife_limit_bdt_2d << "  ,   N_bg = " << Ncount_bdt_2d
+            << "  (N_2nu = " << N_2nu_bdt_2d << std::endl; //", N_radon = " << N_radon_bdt_2d << ")" << std::endl;
+  std::cout << "      Lower window is  " << lower_window_bin_bdt << "  or  " << lower_window_energy_bdt << std::endl;
+  std::cout << "      Upper window is  " << upper_window_bin_bdt << "  or  " << upper_window_energy_bdt << std::endl;
+  std::cout << "      Signal efficiency : " << h_0nu_bdt->Integral(lower_window_bin_bdt,upper_window_bin_bdt)/h_0nu_bdt->Integral(0, h_0nu_bdt->GetNbinsX()) << std::endl; // "   Background efficiency : " << h_2nu_bdt->I
   std::cout << "     ROI    :  "  << best_halflife_limit_roi << "  ,   N_bg = " << Ncount_roi
             << "  (N_2nu = " << N_2nu_roi << std::endl;// ", N_radon = " << N_radon_roi << ")" << std::endl;
   // std::cout << "     ROI 2D :  "  << best_halflife_limit_roi_2d << "  ,   N_bg = " << Ncount_roi_2d
   //           << "  (N_2nu = " << N_2nu_roi_2d << ", N_tl = " << N_tl_roi_2d << ", N_bi = " << N_bi_roi_2d << ", N_radon = " << N_radon_roi_2d << ")" << std::endl;
   std::cout << "     ROI 2D :  "  << best_halflife_limit_roi_2d << "  ,   N_bg = " << Ncount_roi_2d
             << "  (N_2nu = " << N_2nu_roi_2d << std::endl; //", N_radon = " << N_radon_roi_2d << ")" << std::endl;
-  std::cout << "      Lower window is  " << lower_window_bin << "  or  " << lower_window_energy << std::endl;
-  std::cout << "      Upper window is  " << upper_window_bin << "  or  " << upper_window_energy << std::endl;
-  std::cout << "      Signal efficiency : " << h_0nu_roi->Integral(lower_window_bin,upper_window_bin)/h_0nu_roi->Integral(0, h_0nu_roi->GetNbinsX()) << std::endl; // "   Background efficiency : " << h_2nu_roi->Integral(lower_window_bin,upper_window_bin)/h_2nu_roi->Integral(0, h_2nu_roi->GetNbinsX()) << std::endl;
+  std::cout << "      Lower window is  " << lower_window_bin_roi << "  or  " << lower_window_energy_roi << std::endl;
+  std::cout << "      Upper window is  " << upper_window_bin_roi << "  or  " << upper_window_energy_roi << std::endl;
+  std::cout << "      Signal efficiency : " << h_0nu_roi->Integral(lower_window_bin_roi,upper_window_bin_roi)/h_0nu_roi->Integral(0, h_0nu_roi->GetNbinsX()) << std::endl; // "   Background efficiency : " << h_2nu_roi->Integral(lower_window_bin_roi,upper_window_bin_roi)/h_2nu_roi->Integral(0, h_2nu_roi->GetNbinsX()) << std::endl;
   // std::cout << " eff " << tmp_eff <<std::endl;
 
   f_output->cd();
   bdt_halflife->SetName("bdt_halflife");
   roi_halflife->SetName("roi_halflife");
   halflife_2d_roi->SetName("roi_halflife_2d");
+  halflife_2d_bdt->SetName("bdt_halflife_2d");
   bdt_halflife->Write();
   roi_halflife->Write();
-  halflife_2d_roi->Write();
+  halflife_2d_bdt->Write();
 
   TDirectory *efficiencies = f_output->mkdir("efficiencies");
   efficiencies->cd();

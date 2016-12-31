@@ -24,10 +24,11 @@
 
 void bdt_score()
 {
-  bool counts = false;
+bool counts = true;
 
   TFile * f_0nu = TFile::Open("0nu.root");
-  TFile * f_2nu = TFile::Open("2nu.root");
+  // TFile * f_2nu = TFile::Open("2nu_1M.root");
+  TFile * f_2nu = TFile::Open("2nu_full_1M.root");
   TFile * f_tl208 = TFile::Open("tl208.root");
   TFile * f_bi214 = TFile::Open("bi214.root");
   TFile * f_radon = TFile::Open("radon.root");
@@ -152,7 +153,6 @@ void bdt_score()
   h_0nu_bdt->Draw("same");
 
   leg->Draw("same");
-
 
   c1->Write();
 

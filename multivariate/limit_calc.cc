@@ -202,7 +202,6 @@ void calcLimit(TString outFile, TString inList, TString m){
       //report your results for interested observers
       csLim.print();
 
-
       t.Fill();
       delete sbd;
     }

@@ -157,18 +157,18 @@ void classification_application( TString myMethodList = "" )
    reader->AddVariable( "2e_electrons_energy_difference", & electrons_energy_difference );
 
    reader->AddVariable( "2e_electrons_internal_probability", & electrons_internal_probability );
-   reader->AddVariable( "2e_electrons_external_probability", & electrons_external_probability );
+   // reader->AddVariable( "2e_electrons_external_probability", & electrons_external_probability );
 
    reader->AddVariable( "2e_electrons_vertices_distance_y", & electrons_vertices_distance_y );
    reader->AddVariable( "2e_electrons_vertices_distance_z", & electrons_vertices_distance_z );
 
-   reader->AddVariable( "2e_electrons_vertex_position_y", & electrons_vertex_position_y );
-   reader->AddVariable( "2e_electrons_vertex_position_z", & electrons_vertex_position_z );
+   // reader->AddVariable( "2e_electrons_vertex_position_y", & electrons_vertex_position_y );
+   // reader->AddVariable( "2e_electrons_vertex_position_z", & electrons_vertex_position_z );
 
    reader->AddVariable( "2e_electrons_cos_angle", & electrons_cos_angle );
 
-   reader->AddVariable( "2e_electron_Emin_track_length", & electron_Emin_track_length );
-   reader->AddVariable( "2e_electron_Emax_track_length", & electron_Emax_track_length );
+   // reader->AddVariable( "2e_electron_Emin_track_length", & electron_Emin_track_length );
+   // reader->AddVariable( "2e_electron_Emax_track_length", & electron_Emax_track_length );
 
    // // Spectator variables declared in the training have to be added to the reader, too
    // Float_t spec1,spec2;
@@ -255,7 +255,7 @@ void classification_application( TString myMethodList = "" )
    // we'll later on use only the "signal" events for the test in this example.
    //
 
-TString isotope = "2nu";
+TString isotope = "radon";
 
    TFile *input(0);
 
@@ -284,36 +284,36 @@ TString isotope = "2nu";
    Double_t br_2e_electrons_energy_difference = 1;
    Double_t br_2e_electrons_energy_sum = 1;
    Double_t br_2e_electrons_internal_probability = 1;
-   Double_t br_2e_electrons_external_probability = 1;
+   // Double_t br_2e_electrons_external_probability = 1;
    Double_t br_2e_electrons_vertices_distance_y = 1;
    Double_t br_2e_electrons_vertices_distance_z = 1;
-   Double_t br_2e_electrons_vertex_position_y = 1;
-   Double_t br_2e_electrons_vertex_position_z = 1;
+   // Double_t br_2e_electrons_vertex_position_y = 1;
+   // Double_t br_2e_electrons_vertex_position_z = 1;
    Double_t br_2e_electrons_cos_angle = 1;
-   Double_t br_2e_electron_Emin_track_length = 1;
-   Double_t br_2e_electron_Emax_track_length = 1;
+   // Double_t br_2e_electron_Emin_track_length = 1;
+   // Double_t br_2e_electron_Emax_track_length = 1;
 
 
    theTree->SetBranchAddress( "2e_electron_minimal_energy", &br_2e_electron_minimal_energy);
    theTree->SetBranchAddress( "2e_electron_maximal_energy", &br_2e_electron_maximal_energy);
-  theTree->SetBranchAddress( "2e_electrons_energy_sum", &br_2e_electrons_energy_sum);
+   theTree->SetBranchAddress( "2e_electrons_energy_sum", &br_2e_electrons_energy_sum);
    theTree->SetBranchAddress( "2e_electrons_energy_difference", &br_2e_electrons_energy_difference);
    theTree->SetBranchAddress( "2e_electrons_internal_probability", &br_2e_electrons_internal_probability);
-   theTree->SetBranchAddress( "2e_electrons_external_probability", &br_2e_electrons_external_probability);
+   // theTree->SetBranchAddress( "2e_electrons_external_probability", &br_2e_electrons_external_probability);
    theTree->SetBranchAddress( "2e_electrons_vertices_distance_y", &br_2e_electrons_vertices_distance_y);
    theTree->SetBranchAddress( "2e_electrons_vertices_distance_z", &br_2e_electrons_vertices_distance_z);
-   theTree->SetBranchAddress( "2e_electrons_vertex_position_y", &br_2e_electrons_vertex_position_y);
-   theTree->SetBranchAddress( "2e_electrons_vertex_position_z", &br_2e_electrons_vertex_position_z);
+   // theTree->SetBranchAddress( "2e_electrons_vertex_position_y", &br_2e_electrons_vertex_position_y);
+   // theTree->SetBranchAddress( "2e_electrons_vertex_position_z", &br_2e_electrons_vertex_position_z);
    theTree->SetBranchAddress( "2e_electrons_cos_angle", &br_2e_electrons_cos_angle);
-   theTree->SetBranchAddress( "2e_electron_Emin_track_length", &br_2e_electron_Emin_track_length);
-   theTree->SetBranchAddress( "2e_electron_Emax_track_length", &br_2e_electron_Emax_track_length);
+   // theTree->SetBranchAddress( "2e_electron_Emin_track_length", &br_2e_electron_Emin_track_length);
+   // theTree->SetBranchAddress( "2e_electron_Emax_track_length", &br_2e_electron_Emax_track_length);
 
 
    // Efficiency calculator for cut method
    Int_t    nSelCutsGA = 0;
    Double_t effS       = 0.7;
 
-   std::vector<Float_t> vecVar(13); // vector for EvaluateMVA tests
+   std::vector<Float_t> vecVar(8); // vector for EvaluateMVA tests
 
    std::cout << "--- Processing: " << theTree->GetEntries() << " events" << std::endl;
    TStopwatch sw;
@@ -330,14 +330,14 @@ TString isotope = "2nu";
       electrons_energy_sum = (Float_t) br_2e_electrons_energy_sum;
       electrons_energy_difference = (Float_t) br_2e_electrons_energy_difference;
       electrons_internal_probability = (Float_t) br_2e_electrons_internal_probability;
-      electrons_external_probability = (Float_t) br_2e_electrons_external_probability;
+      // electrons_external_probability = (Float_t) br_2e_electrons_external_probability;
       electrons_vertices_distance_y = (Float_t) br_2e_electrons_vertices_distance_y;
       electrons_vertices_distance_z = (Float_t) br_2e_electrons_vertices_distance_z;
-      electrons_vertex_position_y = (Float_t) br_2e_electrons_vertex_position_y;
-      electrons_vertex_position_z = (Float_t) br_2e_electrons_vertex_position_z;
+      // electrons_vertex_position_y = (Float_t) br_2e_electrons_vertex_position_y;
+      // electrons_vertex_position_z = (Float_t) br_2e_electrons_vertex_position_z;
       electrons_cos_angle = (Float_t) br_2e_electrons_cos_angle;
-      electron_Emin_track_length = (Float_t) br_2e_electron_Emin_track_length;
-      electron_Emax_track_length = (Float_t) br_2e_electron_Emax_track_length;
+      // electron_Emin_track_length = (Float_t) br_2e_electron_Emin_track_length;
+      // electron_Emax_track_length = (Float_t) br_2e_electron_Emax_track_length;
 
 
       // --- Return the MVA outputs and fill into histograms

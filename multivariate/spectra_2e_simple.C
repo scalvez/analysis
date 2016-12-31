@@ -25,13 +25,14 @@
 
 void spectra_2e_simple()
 {
-  bool counts = true;
+  bool counts = false;
 
-  // TFile * f_0nu = TFile::Open("../data/trees_source_2e_application/0nu.root");
+  TFile * f_0nu = TFile::Open("../data/trees_source_2e_application/0nu.root");
+  TFile * f_2nu = TFile::Open("../data/trees_source_2e_application/2nu_1M.root");
   // TFile * f_2nu = TFile::Open("../data/trees_source_2e_application/2nu.root");
 
-  TFile * f_0nu = TFile::Open("../data/trees_topo_cuts_2e_application/0nu.root");
-  TFile * f_2nu = TFile::Open("../data/trees_topo_cuts_2e_application/2nu.root");
+  // TFile * f_0nu = TFile::Open("../data/trees_topo_cuts_2e_application/0nu.root");
+  // TFile * f_2nu = TFile::Open("../data/trees_topo_cuts_2e_application/2nu.root");
 
   // TFile * f_0nu = TFile::Open("../data/trees_source_2e/0nu.root");
   // TFile * f_2nu = TFile::Open("../data/trees_source_2e/2nu.root");
@@ -67,7 +68,7 @@ void spectra_2e_simple()
   if (counts)
     TFile *f_output= new TFile("spectra_counts_simple.root","RECREATE");
   else
-    TFile *f_output= new TFile("spectra_counts_simple.root","RECREATE");
+    TFile *f_output= new TFile("spectra_simple.root","RECREATE");
 
   if(counts)
     h_0nu->Scale(1./h_0nu->GetEntries());

@@ -5,14 +5,24 @@
     do
         echo "Isotope : $isotope_str"
 
-        isotope=$isotope_str
-        bb='2nu'
+        if [ "$isotope_str" = "0nu" ]; then
+            sed -i -e 's@.*TString isotope.*@TString isotope = "'$isotope_str'";@g' classification_application.C
+       fi
 
-        sed -i -e 's@.*TString isotope.*@TString isotope = "'$isotope_str'";@g' classification_application.C
+        if [ "$isotope_str" = "2nu" ]; then
+            sed -i -e 's@.*TString isotope.*@TString isotope = "'$isotope_str'_1M";@g' classification_application.C
+       fi
 
         root -l -q classification_application.C
 
     done
-        root -l -b bdt_score_simple.C
+
+    sed -i -e 's@.*bool counts.*@bool counts = false;@g' bdt_score_simple.C
+
+    root -l -b bdt_score_simple.C
+
+    sed -i -e 's@.*bool counts.*@bool counts = true;@g' bdt_score_simple.C
+
+    root -l -b bdt_score_simple.C
 
 )

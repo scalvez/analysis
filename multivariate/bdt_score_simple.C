@@ -24,10 +24,10 @@
 
 void bdt_score_simple()
 {
-  bool counts = false;
+bool counts = true;
 
   TFile * f_0nu = TFile::Open("0nu.root");
-  TFile * f_2nu = TFile::Open("2nu.root");
+  TFile * f_2nu = TFile::Open("2nu_1M.root");
 
   TH1F *h_0nu_bdt = (TH1F*)f_0nu->Get("MVA_BDT");
   TH1F *h_2nu_bdt = (TH1F*)f_2nu->Get("MVA_BDT");
@@ -39,7 +39,7 @@ void bdt_score_simple()
   h_2nu_bdt->Sumw2();
 
   if(counts)
-    TFile *f_output= new TFile("bdt_scores_simple_counts.root","RECREATE");
+    TFile *f_output= new TFile("bdt_scores_counts_simple.root","RECREATE");
   else
     TFile *f_output= new TFile("bdt_scores_simple.root","RECREATE");
 
@@ -91,11 +91,10 @@ void bdt_score_simple()
   TCanvas * c1 = new TCanvas();
   c1->cd();
   // hs->Draw();
-  h_2nu_bdt->Draw("");
-  h_0nu_bdt->Draw("same");
+  h_0nu_bdt->Draw("");
+  h_2nu_bdt->Draw("same");
 
   leg->Draw("same");
-
 
   c1->Write();
 

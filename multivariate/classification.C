@@ -213,7 +213,9 @@ int classification( TString myMethodList = "" )
    // Read training and test data
    // (it is also possible to use ASCII format as input -> see TMVA Users Guide)
    TString fname_signal = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/0nu.root";
-   TString fname_background_2nu = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/2nu.root";
+   // TString fname_background_2nu = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/2nu.root";
+   // TString fname_background_2nu = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/2nu_1M.root";
+   TString fname_background_2nu = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/2nu_full_1M.root";
    TString fname_background_tl208 = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/tl208.root";
    TString fname_background_bi214 = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/bi214.root";
    TString fname_background_radon = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/radon.root";
@@ -238,12 +240,13 @@ int classification( TString myMethodList = "" )
    TTree *background_radon = (TTree*)input_background_radon->Get("snemodata;");
 
    // global event weights per tree (see below for setting event-wise weights)
-   Double_t signalWeight     = 1.0;
-
-   Double_t backgroundWeight_2nu = 1.0;
-   Double_t backgroundWeight_tl208 = 1.0;
-   Double_t backgroundWeight_bi214 = 1.0;
-   Double_t backgroundWeight_radon = 1.0;
+   Double_t signalWeight     = 1;
+   Double_t backgroundWeight_2nu = 1;
+   // Double_t signalWeight     = 2e-5;
+   // Double_t backgroundWeight_2nu = 8500./1e6;
+   Double_t backgroundWeight_tl208 = 1;
+   Double_t backgroundWeight_bi214 = 1;
+   Double_t backgroundWeight_radon = 1;
 
    // Double_t backgroundWeight_2nu = 0.36/(0.36+0.037+0.062+0.079);
    // Double_t backgroundWeight_tl208 = 0.037/(0.36+0.037+0.062+0.079);
@@ -263,9 +266,9 @@ int classification( TString myMethodList = "" )
    // You can add an arbitrary number of signal or background trees
    factory->AddSignalTree    ( signal,     signalWeight     );
    factory->AddBackgroundTree( background_2nu, backgroundWeight_2nu );
-   // factory->AddBackgroundTree( background_tl208, backgroundWeight_tl208 );
-   // factory->AddBackgroundTree( background_bi214, backgroundWeight_bi214 );
-   // factory->AddBackgroundTree( background_radon, backgroundWeight_radon );
+   factory->AddBackgroundTree( background_tl208, backgroundWeight_tl208 );
+   factory->AddBackgroundTree( background_bi214, backgroundWeight_bi214 );
+   factory->AddBackgroundTree( background_radon, backgroundWeight_radon );
 
    // To give different trees for training and testing, do as follows:
    //    factory->AddSignalTree( signalTrainingTree, signalTrainWeight, "Training" );
@@ -486,9 +489,17 @@ int classification( TString myMethodList = "" )
       factory->BookMethod( TMVA::Types::kBDT, "BDTG",
                            "!H:!V:NTrees=1000:MinNodeSize=2.5%:BoostType=Grad:Shrinkage=0.10:UseBaggedBoost:BaggedSampleFraction=0.5:nCuts=20:MaxDepth=2" );
 
-   if (Use["BDT"])  // Adaptive Boost   Default
-      factory->BookMethod( TMVA::Types::kBDT, "BDT",
-                           "!H:!V:NTrees=850:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20" );
+   // if (Use["BDT"])  // Adaptive Boost   Default
+   //    factory->BookMethod( TMVA::Types::kBDT, "BDT",
+   //                         "!H:!V:NTrees=850:MinNodeSize=2.5%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:UseBaggedBoost:BaggedSampleFraction=0.5:SeparationType=GiniIndex:nCuts=20" );
+
+   if (Use["BDT"])  // Adaptive Boost best conf
+     factory->BookMethod( TMVA::Types::kBDT, "BDT",
+                          "!H:!V:NTrees=1000:MinNodeSize=0.5%:MaxDepth=3:BoostType=RealAdaBoost:!UseBaggedBoost:SeparationType=CrossEntropy:nCuts=400" );
+
+     //  if (Use["BDT"])  // Adaptive Boost
+     // factory->BookMethod( TMVA::Types::kBDT, "BDT",
+     //                      "!H:!V:NTrees=800:MinNodeSize=0.5%:MaxDepth=2:BoostType=AdaBoost:!UseBaggedBoost:SeparationType=CrossEntropy:nCuts=400" );
 
    // if (Use["BDT"])  // Adaptive Boost
    //    factory->BookMethod( TMVA::Types::kBDT, "BDT",

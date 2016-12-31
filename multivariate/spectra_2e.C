@@ -27,17 +27,18 @@ void spectra_2e()
 {
   bool counts = false;
 
-  // TFile * f_0nu = TFile::Open("../data/trees_source_2e_application/0nu.root");
-  // TFile * f_2nu = TFile::Open("../data/trees_source_2e_application/2nu.root");
-  // TFile * f_tl208 = TFile::Open("../data/trees_source_2e_application/tl208.root");
-  // TFile * f_bi214 = TFile::Open("../data/trees_source_2e_application/bi214.root");
-  // TFile * f_radon = TFile::Open("../data/trees_source_2e_application/radon.root");
+  TFile * f_0nu = TFile::Open("../data/trees_source_2e_application/0nu.root");
+  // TFile * f_2nu = TFile::Open("../data/trees_source_2e_application/2nu_1M.root");
+  TFile * f_2nu = TFile::Open("../data/trees_source_2e_application/2nu_full_1M.root");
+  TFile * f_tl208 = TFile::Open("../data/trees_source_2e_application/tl208.root");
+  TFile * f_bi214 = TFile::Open("../data/trees_source_2e_application/bi214.root");
+  TFile * f_radon = TFile::Open("../data/trees_source_2e_application/radon.root");
 
-  TFile * f_0nu = TFile::Open("../data/trees_topo_cuts_2e_application/0nu.root");
-  TFile * f_2nu = TFile::Open("../data/trees_topo_cuts_2e_application/2nu.root");
-  TFile * f_tl208 = TFile::Open("../data/trees_topo_cuts_2e_application/tl208.root");
-  TFile * f_bi214 = TFile::Open("../data/trees_topo_cuts_2e_application/bi214.root");
-  TFile * f_radon = TFile::Open("../data/trees_topo_cuts_2e_application/radon.root");
+  // TFile * f_0nu = TFile::Open("../data/trees_topo_cuts_2e_application/0nu.root");
+  // TFile * f_2nu = TFile::Open("../data/trees_topo_cuts_2e_application/2nu_1M.root");
+  // TFile * f_tl208 = TFile::Open("../data/trees_topo_cuts_2e_application/tl208.root");
+  // TFile * f_bi214 = TFile::Open("../data/trees_topo_cuts_2e_application/bi214.root");
+  // TFile * f_radon = TFile::Open("../data/trees_topo_cuts_2e_application/radon.root");
 
   // TFile * f_0nu = TFile::Open("../data/trees_source_2e/0nu.root");
   // TFile * f_2nu = TFile::Open("../data/trees_source_2e/2nu.root");

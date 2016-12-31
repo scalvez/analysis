@@ -256,6 +256,52 @@ void sensitivity()
   }
   tmp_eff = h_0nu_roi->Integral(lower_window_bin,upper_window_bin)*conf_sens::eff_0nu_2e;
 
+  TH2F * halflife_2d_bdt = new TH2F("halflife_2d_bdt","halflife_2d_bdt",h_0nu_bdt->GetNbinsX(), h_0nu_bdt->GetBinLowEdge(1), h_0nu_bdt->GetBinLowEdge(h_0nu_bdt->GetNbinsX()+1),
+                                    h_0nu_bdt->GetNbinsX(), h_0nu_bdt->GetBinLowEdge(1), h_0nu_bdt->GetBinLowEdge(h_0nu_bdt->GetNbinsX()+1));
+
+  double best_halflife_limit_bdt_2d = 0;
+  double Ncount_bdt_2d = 0;
+  double N_2nu_bdt_2d = 0;
+  double N_tl_bdt_2d = 0;
+  double N_bi_bdt_2d = 0;
+  double N_radon_bdt_2d = 0;
+  int lower_window_bin_bdt = 0;
+  int upper_window_bin_bdt = 0;
+  double lower_window_energy_bdt = 0;
+  double upper_window_energy_bdt = 0;
+
+  for (unsigned int i = 1; i < h_0nu_bdt->GetNbinsX(); ++i) {
+    for(unsigned int j = i+1; j <= h_0nu_bdt->GetNbinsX(); ++j) {
+      double eff_0nu = h_0nu_bdt->Integral(i,j); // normalized to 1
+      double eff_2nu = h_2nu_bdt->Integral(i,j); // normalized to 1
+      double N_2nu = eff_2nu * conf_sens::eff_2nu_2e * conf_sens::k_sens / conf_sens::T_2nu;
+      double eff_tl208 = h_tl208_bdt->Integral(i,j); // normalized to 1
+      double N_tl208 = eff_tl208 * conf_sens::eff_tl208_2e * conf_sens::isotope_mass * conf_sens::exposure * conf_sens::year2sec * conf_sens::tl208_activity;
+      double eff_bi214 = h_bi214_bdt->Integral(i,j);
+      double N_bi214 = eff_bi214 * conf_sens::eff_bi214_2e * conf_sens::isotope_mass * conf_sens::exposure * conf_sens::year2sec * conf_sens::bi214_activity;
+      double eff_radon = h_radon_bdt->Integral(i,j);
+      double N_radon = eff_radon * conf_sens::eff_radon_2e * conf_sens::tracker_volume * conf_sens::exposure * conf_sens::year2sec * conf_sens::radon_activity;
+
+      // double N_excluded = get_number_of_excluded_events(N_2nu);
+      double N_excluded = get_number_of_excluded_events(N_2nu + N_tl208 + N_bi214 + N_radon);
+      double halflife = eff_0nu * conf_sens::eff_0nu_2e * conf_sens::k_sens / N_excluded;
+
+      if(best_halflife_limit_bdt_2d<halflife) {
+        Ncount_bdt_2d = N_excluded;
+        N_2nu_bdt_2d = N_2nu;
+        N_tl_bdt_2d = N_tl208;
+        N_bi_bdt_2d = N_bi214;
+        N_radon_bdt_2d = N_radon;
+        lower_window_bin_bdt = i;
+        upper_window_bin_bdt = j;
+        lower_window_energy_bdt = h_0nu_bdt->GetBinLowEdge(i);
+        upper_window_energy_bdt = h_0nu_bdt->GetBinLowEdge(j);
+      }
+      best_halflife_limit_bdt_2d = std::max(best_halflife_limit_bdt_2d, halflife);
+      halflife_2d_bdt->SetBinContent(i,j,halflife);
+    }
+  }
+
   // bdt_significance->Draw("AP");
   bdt_significance->SetName("bdt_significance_norm");
   roi_significance->SetName("roi_significance_norm");
@@ -354,6 +400,13 @@ void sensitivity()
   //           << "  (N_2nu = " << N_2nu_bdt << std::endl; // << ", N_radon = " << N_radon_bdt << ")" << std::endl;
   std::cout << "      Cut is  " << best_bdt_cut_bin << "  or  " << best_bdt_cut_score << std::endl;
   std::cout << "      Signal efficiency : " << h_0nu_bdt->Integral(best_bdt_cut_bin,h_0nu_bdt->GetNbinsX())/h_0nu_bdt->Integral(0, h_0nu_bdt->GetNbinsX()) << std::endl;// << "   Background efficiency : " << h_2nu_bdt->Integral(best_bdt_cut_bin,h_2nu_bdt->GetNbinsX())/h_2nu_bdt->Integral(0, h_2nu_bdt->GetNbinsX()) << std::endl;
+  std::cout << "     BDT 2D  :  "  << best_halflife_limit_bdt_2d << "  ,   N_bg = " << Ncount_bdt_2d
+            << "  (N_2nu = " << N_2nu_bdt_2d << ", N_tl = " << N_tl_bdt_2d << ", N_bi = " << N_bi_bdt_2d << ", N_radon = " << N_radon_bdt_2d << ")" << std::endl;
+  // std::cout << "     BDT 2D :  "  << best_halflife_limit_bdt_2d << "  ,   N_bg = " << Ncount_bdt_2d
+  //           << "  (N_2nu = " << N_2nu_bdt_2d << std::endl; //", N_radon = " << N_radon_bdt_2d << ")" << std::endl;
+  std::cout << "      Lower window is  " << lower_window_bin_bdt << "  or  " << lower_window_energy_bdt << std::endl;
+  std::cout << "      Upper window is  " << upper_window_bin_bdt << "  or  " << upper_window_energy_bdt << std::endl;
+  std::cout << "      Signal efficiency : " << h_0nu_bdt->Integral(lower_window_bin_bdt,upper_window_bin_bdt)/h_0nu_bdt->Integral(0, h_0nu_bdt->GetNbinsX()) << std::endl; // "   Background efficiency : " << h_2nu_bdt->I
   std::cout << "     ROI    :  "  << best_halflife_limit_roi << "  ,   N_bg = " << Ncount_roi
             << "  (N_2nu = " << N_2nu_roi << ", N_tl = " << N_tl_roi << ", N_bi = " << N_bi_roi << ", N_radon = " << N_radon_roi << ")" << std::endl;
   // std::cout << "     ROI    :  "  << best_halflife_limit_roi << "  ,   N_bg = " << Ncount_roi

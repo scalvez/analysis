@@ -31,22 +31,23 @@ namespace conf_sens {
   const double T_2nu = 9.0e19; //years
 
   // source
-  // const double eff_0nu_2e = 2.6227e-1; // MM
-  // // const double eff_0nu_2e = 0.161204; // rhc
-  // // const double eff_2nu_full_range_2e = 0.10104;
-  // const double eff_2nu_2e = 2.1585e-1 / 25;
-  // const double eff_tl208_2e = 1.04e-3;
-  // const double eff_bi214_2e = 1.62e-3;
-  // const double eff_radon_2e = 1.94e-4;
-
-  // topo
-  const double eff_0nu_2e = 2.363e-1; // MM
+  const double eff_0nu_2e = 2.6227e-1; // MM
   // const double eff_0nu_2e = 0.161204; // rhc
   // const double eff_2nu_full_range_2e = 0.10104;
-  const double eff_2nu_2e = 1.929e-1 / 25;
-  const double eff_tl208_2e = 8.67e-4;
-  const double eff_bi214_2e = 1.36e-3;
-  const double eff_radon_2e = 5.69e-5;
+  // const double eff_2nu_2e = 2.1585e-1 / 25;
+  const double eff_2nu_2e = 8.909e-2; //full
+  const double eff_tl208_2e = 1.04e-3;
+  const double eff_bi214_2e = 1.62e-3;
+  const double eff_radon_2e = 1.94e-4;
+
+  // topo
+  // const double eff_0nu_2e = 2.363e-1; // MM
+  // // const double eff_0nu_2e = 0.161204; // rhc
+  // // const double eff_2nu_full_range_2e = 0.10104;
+  // const double eff_2nu_2e = 1.929e-1 / 25;
+  // const double eff_tl208_2e = 8.67e-4;
+  // const double eff_bi214_2e = 1.36e-3;
+  // const double eff_radon_2e = 5.69e-5;
 
   // last old
   // // const double eff_0nu_2e = 0.25462; // MM
