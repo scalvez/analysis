@@ -1,0 +1,65 @@
+| Isotope              | MC size | Details                 | Status             | DL |
+|                      |         |                         |                    |    |
+| 0nu_mm               |    10e6 | 50 * 20k                | OK  xg             | OK |
+|                      |         |                         |                    |    |
+| 2nu                  |    10e7 | 100 * 100k              | OK  sc             | OK |
+|                      |         |                         |                    |    |
+| 208Tl source         |    10e8 | 400 * 250k   (1e8 io)   | OK  xg             | OK |
+|                      |         |                         |                    |    |
+| 214Bi source         |    10e8 | 400 * 250k   (1e8 io)   | OK  xg             | OK |
+|                      |         |                         |                    |    |
+| Radon                |         |                         |                    |    |
+| 214Bi wires surface  |    10e8 | 400 * 250k              | OK xg              | OK |
+|                      |         |                         |                    |    |
+| 214Bi scint. surface |    10e8 | 400 * 250k              | OK xg              | OK |
+|                      |         |                         |                    |    |
+| 208Tl PMT glass bulk |    10e9 | 500*2M                  | OK sc              | OK |
+|                      |         |                         |                    |    |
+| 214Bi PMT glass bulk |    10e9 | 500*2M                  | OK xg              | OK |
+|                      |         |                         |                    |    |
+| 40K PMT glass bulk   |    10e9 | 500*2M                  | OK sc              | OK |
+|                      |         |                         |                    |    |
+| Extra  (no io)       |         |                         |                    |    |
+|                      |         |                         |                    |    |
+| 214Bi scint. surface |     1e7 | 250 * 400k              | OK xg              | OK |
+|                      |         |                         |                    |    |
+| 214Bi wires surface  |     2e8 | 2 * 400 * 250k          | OK sc              |    |
+|                      |         |                         |                    |    |
+| 2nu_full             |     1e8 | 1000 * 100k             | OK sc              | OK |
+|                      |         |                         |                    |    |
+| 2nu_full             |     1e8 | 1000 * 100k             | OK xg              |    |
+|                      |         |                         |                    |    |
+| exc_2_1              |     1e8 | 1000 * 100k             | OK sc              |    |
+|                      |         |                         |                    |    |
+| 0nu_M1               |     1e8 | 1000 * 100k             | OK xg              |    |
+|                      |         |                         |                    |    |
+| 208Tl source         |     4e8 | 4 * 400 * 250k          | OK xg              |    |
+|                      |         |                         |                    |    |
+| 214Bi source         |     4e8 | 4 * 400 * 250k          | OK sc              |    |
+|                      |         |                         |                    |    |
+| 2nu_full             |     1e8 | 1000 * 100k             | sc                 |    |
+|                      |         |                         |                    |    |
+| 2nu_full             |     1e8 | 1000 * 100k             | xg                 |    |
+|                      |         |                         |                    |    |
+| ------ OLD           |         |                         |                    |    |
+|                      |         |                         |                    |    |
+| 214Bi scint. surface |    10e9 | 3*200*500k + 7*250*400k | Partly,            |    |
+|                      |         |                         | needs reprocessing |    |
+| Main wall 8"         |         |                         |                    |    |
+| 208Tl PMT glass bulk |    10e9 | 500*2M                  | OK                 |    |
+| 214Bi PMT glass bulk |    10e9 | 500*2M                  | OK                 |    |
+| 40K PMT glass bulk   |    10e9 | 500*2M                  | OK                 |    |
+|                      |         |                         |                    |    |
+
+
+NEMO3 External background model : Cf James Mott p121 Table 7.1
+
+depuis 13 décembre, pas de reprocess nécessaire
+
+to reprocess :
+0nu
+2nu
+2nu full
+tl208
+bi214
+radon
