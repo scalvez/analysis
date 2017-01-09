@@ -4,33 +4,33 @@
 
 void tree_cut_training() {
 
-
-  int n_training = 1000000;
+  // int n_training = 17933000;
+  int n_training = 37500;
 
   // TString input_file = "./raw_trees/0nu/merge.root";
-  // // TString output_file = "./trees_source_2e_training/0nu.root";
-  // TString output_file = "./trees_topo_cuts_2e_training/0nu.root";
+  // // TString output_file = "./trees_source_2e_training/0nu_2M.root";
+  // TString output_file = "./trees_topo_cuts_2e_training/0nu_2M.root";
 
-  // TString input_file = "./raw_trees/2nu/merge.root";
-  // TString output_file = "./trees_source_2e_training/2nu_500k.root";
-  // // TString output_file = "./trees_topo_cuts_2e_training/2nu.root";
+  // TString input_file = "./raw_trees/2nu_full/merge.root";
+  // // TString output_file = "./trees_source_2e_training/2nu_full.root";
+  // TString output_file = "./trees_topo_cuts_2e_training/2nu_full.root";
 
   // TString input_file = "./raw_trees/tl208/merge.root";
-  // // TString output_file = "./trees_source_2e_training/tl208.root";
-  // TString output_file = "./trees_topo_cuts_2e_training/tl208.root";
+  // TString output_file = "./trees_source_2e_training/tl208.root";
+  // // TString output_file = "./trees_topo_cuts_2e_training/tl208.root";
 
   // TString input_file = "./raw_trees/bi214/merge.root";
-  // // TString output_file = "./trees_source_2e_training/bi214.root";
-  // TString output_file = "./trees_topo_cuts_2e_training/bi214.root";
+  // TString output_file = "./trees_source_2e_training/bi214.root";
+  // // TString output_file = "./trees_topo_cuts_2e_training/bi214.root";
 
-  // TString input_file = "./raw_trees/radon/merge.root";
-  // // TString output_file = "./trees_source_2e_training/radon.root";
+  TString input_file = "./raw_trees/radon/merge.root";
+  TString output_file = "./trees_source_2e_training/radon.root";
   // TString output_file = "./trees_topo_cuts_2e_training/radon.root";
 
-  TString input_file = "./raw_trees/2nu_full/merge.root";
-  TString output_file = "./trees_source_2e_training/2nu_full_1M.root";
-  // TString output_file = "./tmp_eff_full.root";
-  // TString output_file = "./trees_topo_cuts_2e_training/2nu.root";
+  // TString input_file = "./raw_trees/2nu_full/merge.root";
+  // TString output_file = "./trees_source_2e_training/2nu_full_1M.root";
+  // // TString output_file = "./tmp_eff_full.root";
+  // // TString output_file = "./trees_topo_cuts_2e_training/2nu.root";
 
   TFile *f = TFile::Open(input_file);
   TTree *tree = (TTree*)f->Get("snemodata");
