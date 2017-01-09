@@ -48,7 +48,7 @@ void limit_roostats_bdt() {
 
   RooMsgService::instance().setGlobalKillBelow(RooFit::WARNING);
 
-  TFile *infile = TFile::Open("./tmp_full_bkg/bdt_scores.root");
+  TFile *infile = TFile::Open("./bdt_scores.root");
   TH1D* sig = (TH1D*)infile->Get("0nu");
   TH1D* bkg1 = (TH1D*)infile->Get("2nu");
   TH1D* bkg2 = (TH1D*)infile->Get("tl208");
@@ -80,7 +80,7 @@ void limit_roostats_bdt() {
   double lim = 0;
   double count_lim = 0;
 
-  double n_pseudo = 100;
+  double n_pseudo = 1;
   for(auto i = 1; i<=n_pseudo; ++i) {
     if(i%10==0)
       std::cout << std::endl << " -------Pseudo experiment n° " << i << std::endl;
@@ -149,6 +149,7 @@ void limit_roostats_bdt() {
 
     w->import(mc);
 
+    std::cout << " debug " << std::endl;
     double confidenceLevel = 0.9;
 
     double lowerLimit = 0;
@@ -157,7 +158,7 @@ void limit_roostats_bdt() {
       RooDataHist *h_data = data->binnedClone();
 
       double best_lower_limit = 99;
-      for(double i = -0.5; i<=0.5;i+=0.01) {
+      for(double i = -0.5; i<=1;i+=0.01) {
         TString cut = "score>"+ std::to_string(i);
         double n_window = h_data->sumEntries(cut);
         double n_exp = h_data->sumEntries(cut);

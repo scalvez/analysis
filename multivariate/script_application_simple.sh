@@ -6,14 +6,14 @@
         echo "Isotope : $isotope_str"
 
         if [ "$isotope_str" = "0nu" ]; then
-            sed -i -e 's@.*TString isotope.*@TString isotope = "'$isotope_str'";@g' classification_application.C
+            sed -i -e 's@.*TString isotope.*@TString isotope = "'$isotope_str'_1M";@g' classification_application_simple.C
        fi
 
         if [ "$isotope_str" = "2nu" ]; then
-            sed -i -e 's@.*TString isotope.*@TString isotope = "'$isotope_str'_1M";@g' classification_application.C
+            sed -i -e 's@.*TString isotope.*@TString isotope = "'$isotope_str'_full_1M";@g' classification_application_simple.C
        fi
 
-        root -l -q classification_application.C
+        root -l -q classification_application_simple.C
 
     done
 

@@ -58,7 +58,10 @@
 
 int classification( TString myMethodList = "" )
 {
-   // The explicit loading of the shared libTMVA is done in TMVAlogon.C, defined in .rootrc
+  TString output_name = "TMVA_D.root";
+  TString factory_name = "classification_D";
+
+  // The explicit loading of the shared libTMVA is done in TMVAlogon.C, defined in .rootrc
    // if you use your private .rootrc, or run from a different directory, please copy the
    // corresponding lines from .rootrc
 
@@ -164,7 +167,7 @@ int classification( TString myMethodList = "" )
    // --- Here the preparation phase begins
 
    // Create a ROOT output file where TMVA will store ntuples, histograms, etc.
-   TString outfileName( "TMVA.root" );
+   TString outfileName( output_name );
    TFile* outputFile = TFile::Open( outfileName, "RECREATE" );
 
    // Create the factory object. Later you can choose the methods
@@ -179,7 +182,7 @@ int classification( TString myMethodList = "" )
    // front of the "Silent" argument in the option string
    // TMVA::Factory *factory = new TMVA::Factory( "TMVAClassification", outputFile,
    //                                             "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
-   TMVA::Factory *factory = new TMVA::Factory( "classification", outputFile,
+   TMVA::Factory *factory = new TMVA::Factory( factory_name, outputFile,
                                                "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
 
    // If you wish to modify default settings
@@ -195,15 +198,15 @@ int classification( TString myMethodList = "" )
    factory->AddVariable( "2e_electrons_energy_sum", "Electrons energy sum", "MeV", 'F' );
    factory->AddVariable( "2e_electrons_energy_difference", "Electrons energy difference", "MeV", 'F' );
    factory->AddVariable( "2e_electrons_internal_probability", "Electrons internal probability","",'F' );
-   // factory->AddVariable( "2e_electrons_external_probability", "Electrons external probability","",'F' );
-   // factory->AddVariable( "2e_electrons_vertices_probability", "Electrons vertices probability","",'F' );
-   factory->AddVariable( "2e_electrons_vertices_distance_y", "Electrons vertices distance in Y","",'F' );
-   factory->AddVariable( "2e_electrons_vertices_distance_z", "Electrons vertices distance in Z","",'F' );
+   factory->AddVariable( "2e_electrons_external_probability", "Electrons external probability","",'F' );
+   factory->AddVariable( "2e_electrons_vertices_probability", "Electrons vertices probability","",'F' );
+   // factory->AddVariable( "2e_electrons_vertices_distance_y", "Electrons vertices distance in Y","",'F' );
+   // factory->AddVariable( "2e_electrons_vertices_distance_z", "Electrons vertices distance in Z","",'F' );
    // factory->AddVariable( "2e_electrons_vertex_position_y", "Electrons vertex position in Y","",'F' );
    // factory->AddVariable( "2e_electrons_vertex_position_z", "Electrons vertex position in Z","",'F' );
    factory->AddVariable( "2e_electrons_cos_angle", "Electrons cos(angle)", "", 'F' );
-   // factory->AddVariable( "2e_electron_Emin_track_length", "Electron of minimal energy track length", "mm", 'F' );
-   // factory->AddVariable( "2e_electron_Emax_track_length", "Electron of maximal energy track length", "mm", 'F' );
+   factory->AddVariable( "2e_electron_Emin_track_length", "Electron of minimal energy track length", "mm", 'F' );
+   factory->AddVariable( "2e_electron_Emax_track_length", "Electron of maximal energy track length", "mm", 'F' );
 
    // You can add so-called "Spectator variables", which are not used in the MVA training,
    // but will appear in the final "TestTree" produced by TMVA. This TestTree will contain the
@@ -212,13 +215,14 @@ int classification( TString myMethodList = "" )
 
    // Read training and test data
    // (it is also possible to use ASCII format as input -> see TMVA Users Guide)
-   TString fname_signal = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/0nu.root";
+   TString fname_signal = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/0nu_2M.root";
    // TString fname_background_2nu = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/2nu.root";
    // TString fname_background_2nu = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/2nu_1M.root";
-   TString fname_background_2nu = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/2nu_full_1M.root";
+   TString fname_background_2nu = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/2nu_full.root";
    TString fname_background_tl208 = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/tl208.root";
    TString fname_background_bi214 = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/bi214.root";
    TString fname_background_radon = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/radon.root";
+
 
    // if (gSystem->AccessPathName( fname ))  // file does not exist in local directory
    //    gSystem->Exec("curl -O http://root.cern.ch/files/tmva_class_example.root");
@@ -241,12 +245,23 @@ int classification( TString myMethodList = "" )
 
    // global event weights per tree (see below for setting event-wise weights)
    Double_t signalWeight     = 1;
-   Double_t backgroundWeight_2nu = 1;
-   // Double_t signalWeight     = 2e-5;
-   // Double_t backgroundWeight_2nu = 8500./1e6;
-   Double_t backgroundWeight_tl208 = 1;
-   Double_t backgroundWeight_bi214 = 1;
-   Double_t backgroundWeight_radon = 1;
+   Double_t backgroundWeight_2nu = 1.;
+   Double_t backgroundWeight_tl208 = 1.;
+   Double_t backgroundWeight_bi214 = 1.;
+   Double_t backgroundWeight_radon = 1.;
+
+   // Double_t signalWeight     = 1;
+   // Double_t backgroundWeight_2nu = 1.;
+   // Double_t backgroundWeight_tl208 = 1.*5./3;
+   // Double_t backgroundWeight_bi214 = 1.*5./2.;
+   // Double_t backgroundWeight_radon = 1.*500./37.5;
+
+   // // global event weights per tree (see below for setting event-wise weights)
+   // Double_t signalWeight     = 1;
+   // Double_t backgroundWeight_2nu = 1./474050.*(474050.+300000+200000)/3;
+   // Double_t backgroundWeight_tl208 = 1./200000.*(474050.+300000+200000)/3;
+   // Double_t backgroundWeight_bi214 = 1./300000.*(474050.+300000+200000)/3;
+   // // Double_t backgroundWeight_radon = 1539000./4./39000;
 
    // Double_t backgroundWeight_2nu = 0.36/(0.36+0.037+0.062+0.079);
    // Double_t backgroundWeight_tl208 = 0.037/(0.36+0.037+0.062+0.079);
@@ -315,8 +330,8 @@ int classification( TString myMethodList = "" )
    // factory->SetBackgroundWeightExpression( "weight" );
 
    // Apply additional cuts on the signal and background samples (can be different)
-   TCut mycuts = ""; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
-   TCut mycutb = ""; // for example: TCut mycutb = "abs(var1)<0.5";
+   TCut mycuts = "2e_electrons_energy_sum>2"; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
+   TCut mycutb = "2e_electrons_energy_sum>2"; // for example: TCut mycutb = "abs(var1)<0.5";
 
    // Tell the factory how to use the training and testing events
    //
@@ -495,7 +510,7 @@ int classification( TString myMethodList = "" )
 
    if (Use["BDT"])  // Adaptive Boost best conf
      factory->BookMethod( TMVA::Types::kBDT, "BDT",
-                          "!H:!V:NTrees=1000:MinNodeSize=0.5%:MaxDepth=3:BoostType=RealAdaBoost:!UseBaggedBoost:SeparationType=CrossEntropy:nCuts=400" );
+                          "!H:!V:NTrees=400:MinNodeSize=0.01%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.2:SeparationType=GiniIndex:nCuts=400" );
 
      //  if (Use["BDT"])  // Adaptive Boost
      // factory->BookMethod( TMVA::Types::kBDT, "BDT",

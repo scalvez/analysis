@@ -26,8 +26,8 @@ void bdt_score_simple()
 {
 bool counts = true;
 
-  TFile * f_0nu = TFile::Open("0nu.root");
-  TFile * f_2nu = TFile::Open("2nu_1M.root");
+  TFile * f_0nu = TFile::Open("0nu_1M.root");
+  TFile * f_2nu = TFile::Open("2nu_full_1M.root");
 
   TH1F *h_0nu_bdt = (TH1F*)f_0nu->Get("MVA_BDT");
   TH1F *h_2nu_bdt = (TH1F*)f_2nu->Get("MVA_BDT");
@@ -98,7 +98,6 @@ bool counts = true;
 
   c1->Write();
 
-  // TH1F *h_data = new TH1F("h_data","h_data",100,-0.8,0.8) ;
   TH1F *h_data = new TH1F("h_data","h_data",100,-1,1) ;
 
   for(unsigned int i = 1; i<=100; ++i) {

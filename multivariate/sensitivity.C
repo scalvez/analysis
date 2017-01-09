@@ -24,7 +24,7 @@
 
 void sensitivity()
 {
-  TFile * f_bdt = TFile::Open("bdt_scores.root");
+  TFile * f_bdt = TFile::Open("bdt_scores/bdt_scores.root");
 
   TH1F *h_0nu_bdt = (TH1F*)f_bdt->Get("0nu");
   TH1F *h_2nu_bdt = (TH1F*)f_bdt->Get("2nu");
@@ -33,7 +33,7 @@ void sensitivity()
   TH1F *h_radon_bdt = (TH1F*)f_bdt->Get("radon");
   THStack *h_stack_bdt_norm = (THStack*)f_bdt->Get("hs");
 
-  TFile * f_roi = TFile::Open("spectra.root");
+  TFile * f_roi = TFile::Open("spectra/spectra.root");
 
   TH1F *h_0nu_roi = (TH1F*)f_roi->Get("0nu");
   TH1F *h_2nu_roi = (TH1F*)f_roi->Get("2nu");
@@ -284,6 +284,7 @@ void sensitivity()
 
       // double N_excluded = get_number_of_excluded_events(N_2nu);
       double N_excluded = get_number_of_excluded_events(N_2nu + N_tl208 + N_bi214 + N_radon);
+      // double N_excluded = get_number_of_excluded_events(N_2nu + N_tl208 + N_bi214);
       double halflife = eff_0nu * conf_sens::eff_0nu_2e * conf_sens::k_sens / N_excluded;
 
       if(best_halflife_limit_bdt_2d<halflife) {
@@ -395,7 +396,7 @@ void sensitivity()
 
   std::cout << " Best halflives " << std::endl;
   std::cout << "     BDT    :  "  << best_halflife_limit_bdt << "  ,   N_bg = " << Ncount_bdt
-            << "  (N_2nu = " << N_2nu_bdt << ", N_tl = " << N_tl_bdt << ", N_bi = " << N_bi_bdt << ", N_radon = " << N_radon_bdt << ")" << std::endl;
+            << "  (N_2nu = " << N_2nu_bdt << ", N_tl = " << N_tl_bdt << ", N_bi = " << N_bi_bdt <<", N_radon = " << N_radon_bdt << ")" << std::endl;
   // std::cout << "     BDT    :  "  << best_halflife_limit_bdt << "  ,   N_bg = " << Ncount_bdt
   //           << "  (N_2nu = " << N_2nu_bdt << std::endl; // << ", N_radon = " << N_radon_bdt << ")" << std::endl;
   std::cout << "      Cut is  " << best_bdt_cut_bin << "  or  " << best_bdt_cut_score << std::endl;

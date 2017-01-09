@@ -151,21 +151,21 @@ void classification_application_simple( TString myMethodList = "" )
    Float_t electron_Emin_track_length = 0;
    Float_t electron_Emax_track_length = 0;
 
-   // reader->AddVariable( "2e_electron_minimal_energy", & electron_minimal_energy );
-   // reader->AddVariable( "2e_electron_maximal_energy", & electron_maximal_energy );
+   reader->AddVariable( "2e_electron_minimal_energy", & electron_minimal_energy );
+   reader->AddVariable( "2e_electron_maximal_energy", & electron_maximal_energy );
    reader->AddVariable( "2e_electrons_energy_sum", & electrons_energy_sum );
-   // reader->AddVariable( "2e_electrons_energy_difference", & electrons_energy_difference );
+   reader->AddVariable( "2e_electrons_energy_difference", & electrons_energy_difference );
 
-   // reader->AddVariable( "2e_electrons_internal_probability", & electrons_internal_probability );
-   // reader->AddVariable( "2e_electrons_external_probability", & electrons_external_probability );
+   reader->AddVariable( "2e_electrons_internal_probability", & electrons_internal_probability );
+   reader->AddVariable( "2e_electrons_external_probability", & electrons_external_probability );
 
-   // reader->AddVariable( "2e_electrons_vertices_distance_y", & electrons_vertices_distance_y );
-   // reader->AddVariable( "2e_electrons_vertices_distance_z", & electrons_vertices_distance_z );
+   reader->AddVariable( "2e_electrons_vertices_distance_y", & electrons_vertices_distance_y );
+   reader->AddVariable( "2e_electrons_vertices_distance_z", & electrons_vertices_distance_z );
 
    // reader->AddVariable( "2e_electrons_vertex_position_y", & electrons_vertex_position_y );
    // reader->AddVariable( "2e_electrons_vertex_position_z", & electrons_vertex_position_z );
 
-   // reader->AddVariable( "2e_electrons_cos_angle", & electrons_cos_angle );
+   reader->AddVariable( "2e_electrons_cos_angle", & electrons_cos_angle );
 
    // reader->AddVariable( "2e_electron_Emin_track_length", & electron_Emin_track_length );
    // reader->AddVariable( "2e_electron_Emax_track_length", & electron_Emax_track_length );
@@ -255,7 +255,7 @@ void classification_application_simple( TString myMethodList = "" )
    // we'll later on use only the "signal" events for the test in this example.
    //
 
-TString isotope = "2nu_1M";
+TString isotope = "2nu_full_1M";
 
    TFile *input(0);
 

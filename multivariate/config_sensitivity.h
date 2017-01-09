@@ -31,14 +31,15 @@ namespace conf_sens {
   const double T_2nu = 9.0e19; //years
 
   // source
-  const double eff_0nu_2e = 2.6227e-1; // MM
+  const double eff_0nu_2e = 2.634e-1; // MM
   // const double eff_0nu_2e = 0.161204; // rhc
   // const double eff_2nu_full_range_2e = 0.10104;
   // const double eff_2nu_2e = 2.1585e-1 / 25;
-  const double eff_2nu_2e = 8.909e-2; //full
-  const double eff_tl208_2e = 1.04e-3;
-  const double eff_bi214_2e = 1.62e-3;
-  const double eff_radon_2e = 1.94e-4;
+  // const double eff_2nu_2e = 8.967e-2; //full
+  const double eff_2nu_2e = 8.967e-2 * 2.6435e-2; //full E>2 cut
+  const double eff_tl208_2e = 1.058e-3;
+  const double eff_bi214_2e = 1.642e-3;
+  const double eff_radon_2e = 1.951e-4;
 
   // topo
   // const double eff_0nu_2e = 2.363e-1; // MM
@@ -64,8 +65,8 @@ namespace conf_sens {
   // const double eff_2nu_2e = 1031781./(124*40000)/25 ; //uBq/kg  // only correct above 2MeV
   // const double eff_tl208_2e = 10875./1e7; //uBq/kg
   // const double eff_bi214_2e = 29148./1e7; //uBq/kg
-  // const double eff_radon_2e = 729./1e7; //150uBq/m3
 
+  // const double eff_radon_2e = 729./1e7; //150uBq/m3
   const double tl208_activity = 2e-6; //Bq/kg
   // const double tl208_activity = 23.6 /1e6; //Bq/kg
   const double bi214_activity = 10e-6; //Bq/kg

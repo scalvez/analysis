@@ -27,9 +27,16 @@ void spectra_2e()
 {
   bool counts = false;
 
-  TFile * f_0nu = TFile::Open("../data/trees_source_2e_application/0nu.root");
+  // TFile * f_0nu = TFile::Open("$SW_WORK_DIR/multivariate_analysis/data_0nu_mm.root");
+  // // TFile * f_2nu = TFile::Open("2nu_1M.root");
+  // TFile * f_2nu = TFile::Open("$SW_WORK_DIR/multivariate_analysis/data_2nu.root");
+  // TFile * f_tl208 = TFile::Open("$SW_WORK_DIR/multivariate_analysis/data_tl208.root");
+  // TFile * f_bi214 = TFile::Open("$SW_WORK_DIR/multivariate_analysis/data_bi214.root");
+  // // TFile * f_radon = TFile::Open("../data/trees_source_2e_application/radon.root");
+
+  TFile * f_0nu = TFile::Open("../data/trees_source_2e_application/0nu_1M.root");
   // TFile * f_2nu = TFile::Open("../data/trees_source_2e_application/2nu_1M.root");
-  TFile * f_2nu = TFile::Open("../data/trees_source_2e_application/2nu_full_1M.root");
+  TFile * f_2nu = TFile::Open("../data/trees_source_2e_application/2nu_full_2MeV.root");
   TFile * f_tl208 = TFile::Open("../data/trees_source_2e_application/tl208.root");
   TFile * f_bi214 = TFile::Open("../data/trees_source_2e_application/bi214.root");
   TFile * f_radon = TFile::Open("../data/trees_source_2e_application/radon.root");
@@ -111,9 +118,9 @@ void spectra_2e()
   h_radon->Sumw2();
 
   if (counts)
-    TFile *f_output= new TFile("spectra_counts.root","RECREATE");
+    TFile *f_output= new TFile("./spectra/spectra_counts.root","RECREATE");
   else
-    TFile *f_output= new TFile("spectra.root","RECREATE");
+    TFile *f_output= new TFile("./spectra/spectra.root","RECREATE");
 
   if(counts)
     h_0nu->Scale(1./h_0nu->GetEntries());
@@ -176,8 +183,8 @@ void spectra_2e()
     h_data->SetBinContent(i,h_0nu->GetBinContent(i) +
                           h_2nu->GetBinContent(i)   +
                           h_tl208->GetBinContent(i) +
-                          h_bi214->GetBinContent(i) +
-                          h_radon->GetBinContent(i)
+                          h_bi214->GetBinContent(i)
+                          + h_radon->GetBinContent(i)
                           );
   }
 

@@ -27,8 +27,8 @@ void spectra_2e_simple()
 {
   bool counts = false;
 
-  TFile * f_0nu = TFile::Open("../data/trees_source_2e_application/0nu.root");
-  TFile * f_2nu = TFile::Open("../data/trees_source_2e_application/2nu_1M.root");
+  TFile * f_0nu = TFile::Open("../data/trees_source_2e_application/0nu_1M.root");
+  TFile * f_2nu = TFile::Open("../data/trees_source_2e_application/2nu_full_1M.root");
   // TFile * f_2nu = TFile::Open("../data/trees_source_2e_application/2nu.root");
 
   // TFile * f_0nu = TFile::Open("../data/trees_topo_cuts_2e_application/0nu.root");

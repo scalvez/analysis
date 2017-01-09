@@ -58,7 +58,10 @@
 
 int classification_simple( TString myMethodList = "" )
 {
-   // The explicit loading of the shared libTMVA is done in TMVAlogon.C, defined in .rootrc
+  TString output_name = "TMVA_test.root";
+  TString factory_name = "classification_simple_test";
+
+  // The explicit loading of the shared libTMVA is done in TMVAlogon.C, defined in .rootrc
    // if you use your private .rootrc, or run from a different directory, please copy the
    // corresponding lines from .rootrc
 
@@ -164,7 +167,7 @@ int classification_simple( TString myMethodList = "" )
    // --- Here the preparation phase begins
 
    // Create a ROOT output file where TMVA will store ntuples, histograms, etc.
-   TString outfileName( "TMVA.root" );
+   TString outfileName( output_name );
    TFile* outputFile = TFile::Open( outfileName, "RECREATE" );
 
    // Create the factory object. Later you can choose the methods
@@ -179,7 +182,7 @@ int classification_simple( TString myMethodList = "" )
    // front of the "Silent" argument in the option string
    // TMVA::Factory *factory = new TMVA::Factory( "TMVAClassification", outputFile,
    //                                             "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
-   TMVA::Factory *factory = new TMVA::Factory( "classification_simple", outputFile,
+   TMVA::Factory *factory = new TMVA::Factory( factory_name, outputFile,
                                                "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;G,D:AnalysisType=Classification" );
 
    // If you wish to modify default settings
@@ -190,18 +193,18 @@ int classification_simple( TString myMethodList = "" )
    // Define the input variables that shall be used for the MVA training
    // note that you may also use variable expressions, such as: "3*var1/var2*abs(var3)"
    // [all types of expressions that can also be parsed by TTree::Draw( "expression" )]
-   // factory->AddVariable( "2e_electron_minimal_energy", "Electron minimal energy", "MeV", 'F' );
-   // factory->AddVariable( "2e_electron_maximal_energy", "Electron maximal energy", "MeV", 'F' );
+   factory->AddVariable( "2e_electron_minimal_energy", "Electron minimal energy", "MeV", 'F' );
+   factory->AddVariable( "2e_electron_maximal_energy", "Electron maximal energy", "MeV", 'F' );
    factory->AddVariable( "2e_electrons_energy_sum", "Electrons energy sum", "MeV", 'F' );
-   // factory->AddVariable( "2e_electrons_energy_difference", "Electrons energy difference", "MeV", 'F' );
-   // factory->AddVariable( "2e_electrons_internal_probability", "Electrons internal probability","",'F' );
-   // factory->AddVariable( "2e_electrons_external_probability", "Electrons external probability","",'F' );
+   factory->AddVariable( "2e_electrons_energy_difference", "Electrons energy difference", "MeV", 'F' );
+   factory->AddVariable( "2e_electrons_internal_probability", "Electrons internal probability","",'F' );
+   factory->AddVariable( "2e_electrons_external_probability", "Electrons external probability","",'F' );
    // factory->AddVariable( "2e_electrons_vertices_probability", "Electrons vertices probability","",'F' );
-   // factory->AddVariable( "2e_electrons_vertices_distance_y", "Electrons vertices distance in Y","",'F' );
-   // factory->AddVariable( "2e_electrons_vertices_distance_z", "Electrons vertices distance in Z","",'F' );
+   factory->AddVariable( "2e_electrons_vertices_distance_y", "Electrons vertices distance in Y","",'F' );
+   factory->AddVariable( "2e_electrons_vertices_distance_z", "Electrons vertices distance in Z","",'F' );
    // factory->AddVariable( "2e_electrons_vertex_position_y", "Electrons vertex position in Y","",'F' );
    // factory->AddVariable( "2e_electrons_vertex_position_z", "Electrons vertex position in Z","",'F' );
-   // factory->AddVariable( "2e_electrons_cos_angle", "Electrons cos(angle)", "", 'F' );
+   factory->AddVariable( "2e_electrons_cos_angle", "Electrons cos(angle)", "", 'F' );
    // factory->AddVariable( "2e_electron_Emin_track_length", "Electron of minimal energy track length", "mm", 'F' );
    // factory->AddVariable( "2e_electron_Emax_track_length", "Electron of maximal energy track length", "mm", 'F' );
 
@@ -212,9 +215,9 @@ int classification_simple( TString myMethodList = "" )
 
    // Read training and test data
    // (it is also possible to use ASCII format as input -> see TMVA Users Guide)
-   TString fname_signal = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/0nu.root";
+   TString fname_signal = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/0nu_2M.root";
    // TString fname_background_2nu = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/2nu.root";
-   TString fname_background_2nu = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/2nu_1M.root";
+   TString fname_background_2nu = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/2nu_full_2M.root";
 
    // if (gSystem->AccessPathName( fname ))  // file does not exist in local directory
    //    gSystem->Exec("curl -O http://root.cern.ch/files/tmva_class_example.root");
@@ -230,9 +233,9 @@ int classification_simple( TString myMethodList = "" )
    TTree *background_2nu = (TTree*)input_background_2nu->Get("snemodata;");
 
    // global event weights per tree (see below for setting event-wise weights)
-   Double_t signalWeight     = 2e-5;
+   Double_t signalWeight     = 1.;
 
-   Double_t backgroundWeight_2nu = 8500./1e6;
+   Double_t backgroundWeight_2nu = 1.;
 
    // You can add an arbitrary number of signal or background trees
    factory->AddSignalTree    ( signal,     signalWeight     );
@@ -283,8 +286,8 @@ int classification_simple( TString myMethodList = "" )
    // factory->SetBackgroundWeightExpression( "weight" );
 
    // Apply additional cuts on the signal and background samples (can be different)
-   TCut mycuts = ""; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
-   TCut mycutb = ""; // for example: TCut mycutb = "abs(var1)<0.5";
+   TCut mycuts = "2e_electrons_energy_sum > 2"; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
+   TCut mycutb = "2e_electrons_energy_sum > 2"; // for example: TCut mycutb = "abs(var1)<0.5";
 
    // Tell the factory how to use the training and testing events
    //
@@ -465,9 +468,13 @@ int classification_simple( TString myMethodList = "" )
    //   factory->BookMethod( TMVA::Types::kBDT, "BDT",
    //                        "!H:!V:NTrees=850:MinNodeSize=1.0%:MaxDepth=3:BoostType=AdaBoost:AdaBoostBeta=0.5:SeparationType=GiniIndex:nCuts=100" );
 
+   // if (Use["BDT"])  // Adaptive Boost
+   //   factory->BookMethod( TMVA::Types::kBDT, "BDT",
+   //                        "!H:!V:NTrees=1000:MinNodeSize=0.001%:MaxDepth=6:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=400" );
+
    if (Use["BDT"])  // Adaptive Boost
      factory->BookMethod( TMVA::Types::kBDT, "BDT",
-                          "!H:!V:NTrees=1000:MinNodeSize=10%:MaxDepth=6:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=400" );
+                          "!H:!V:NTrees=1000:MinNodeSize=0.005%:MaxDepth=5:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=400" );
 
    // if (Use["BDT"])  // Adaptive Boost
    //    factory->BookMethod( TMVA::Types::kBDT, "BDT",

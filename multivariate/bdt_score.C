@@ -26,12 +26,19 @@ void bdt_score()
 {
 bool counts = true;
 
-  TFile * f_0nu = TFile::Open("0nu.root");
+  // TFile * f_0nu = TFile::Open("old_0nu.root");
+  // // TFile * f_2nu = TFile::Open("2nu_1M.root");
+  // TFile * f_2nu = TFile::Open("old_2nu.root");
+  // TFile * f_tl208 = TFile::Open("tl208.root");
+  // TFile * f_bi214 = TFile::Open("bi214.root");
+  // // TFile * f_radon = TFile::Open("radon.root");
+
+  TFile * f_0nu = TFile::Open("./bdt_scores/0nu_1M.root");
   // TFile * f_2nu = TFile::Open("2nu_1M.root");
-  TFile * f_2nu = TFile::Open("2nu_full_1M.root");
-  TFile * f_tl208 = TFile::Open("tl208.root");
-  TFile * f_bi214 = TFile::Open("bi214.root");
-  TFile * f_radon = TFile::Open("radon.root");
+  TFile * f_2nu = TFile::Open("./bdt_scores/2nu_full_2MeV.root");
+  TFile * f_tl208 = TFile::Open("./bdt_scores/tl208.root");
+  TFile * f_bi214 = TFile::Open("./bdt_scores/bi214.root");
+  TFile * f_radon = TFile::Open("./bdt_scores/radon.root");
 
   TH1F *h_0nu_bdt = (TH1F*)f_0nu->Get("MVA_BDT");
   TH1F *h_2nu_bdt = (TH1F*)f_2nu->Get("MVA_BDT");
@@ -52,9 +59,9 @@ bool counts = true;
   h_radon_bdt->Sumw2();
 
   if(counts)
-    TFile *f_output= new TFile("bdt_scores_counts.root","RECREATE");
+    TFile *f_output= new TFile("./bdt_scores/bdt_scores_counts.root","RECREATE");
   else
-    TFile *f_output= new TFile("bdt_scores.root","RECREATE");
+    TFile *f_output= new TFile("./bdt_scores/bdt_scores.root","RECREATE");
 
   if(counts)
     h_0nu_bdt->Scale(1./h_0nu_bdt->GetEntries());
@@ -156,7 +163,6 @@ bool counts = true;
 
   c1->Write();
 
-  // TH1F *h_data = new TH1F("h_data","h_data",100,-0.8,0.8) ;
   TH1F *h_data = new TH1F("h_data","h_data",100,-1,1) ;
 
   for(unsigned int i = 1; i<=100; ++i) {
