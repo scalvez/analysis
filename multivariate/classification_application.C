@@ -140,12 +140,12 @@ void classification_application( TString myMethodList = "" )
    Float_t electrons_internal_probability = 0;
    Float_t electrons_external_probability = 0;
 
-   // Float_t electrons_vertices_distance_y = 0;
-   // Float_t electrons_vertices_distance_z = 0;
-   Float_t electrons_vertices_probability = 0;
+   Float_t electrons_vertices_distance_y = 0;
+   Float_t electrons_vertices_distance_z = 0;
+   // Float_t electrons_vertices_probability = 0;
 
-   Float_t electrons_vertex_position_y = 0;
-   Float_t electrons_vertex_position_z = 0;
+   // Float_t electrons_vertex_position_y = 0;
+   // Float_t electrons_vertex_position_z = 0;
 
    Float_t electrons_cos_angle = 0;
 
@@ -160,9 +160,9 @@ void classification_application( TString myMethodList = "" )
    reader->AddVariable( "2e_electrons_internal_probability", & electrons_internal_probability );
    reader->AddVariable( "2e_electrons_external_probability", & electrons_external_probability );
 
-   // reader->AddVariable( "2e_electrons_vertices_distance_y", & electrons_vertices_distance_y );
-   // reader->AddVariable( "2e_electrons_vertices_distance_z", & electrons_vertices_distance_z );
-   reader->AddVariable( "2e_electrons_vertices_probability", & electrons_vertices_probability );
+   reader->AddVariable( "2e_electrons_vertices_distance_y", & electrons_vertices_distance_y );
+   reader->AddVariable( "2e_electrons_vertices_distance_z", & electrons_vertices_distance_z );
+   // reader->AddVariable( "2e_electrons_vertices_probability", & electrons_vertices_probability );
 
    // reader->AddVariable( "2e_electrons_vertex_position_y", & electrons_vertex_position_y );
    // reader->AddVariable( "2e_electrons_vertex_position_z", & electrons_vertex_position_z );
@@ -186,9 +186,9 @@ void classification_application( TString myMethodList = "" )
    // }
 
    // --- Book the MVA methods
-
-   TString dir    = "weights/";
-   TString prefix = "classification_C";
+   // §§§§§
+   TString dir    = "dataset/weights/";
+   TString prefix = "classification_test";
 
    // Book method(s)
    for (std::map<std::string,int>::iterator it = Use.begin(); it != Use.end(); it++) {
@@ -200,7 +200,7 @@ void classification_application( TString myMethodList = "" )
    }
 
    // Book output histograms
-   UInt_t nbin = 100;
+   UInt_t nbin = 202;
    TH1F   *histLk(0), *histLkD(0), *histLkPCA(0), *histLkKDE(0), *histLkMIX(0), *histPD(0), *histPDD(0);
    TH1F   *histPDPCA(0), *histPDEFoam(0), *histPDEFoamErr(0), *histPDEFoamSig(0), *histKNN(0), *histHm(0);
    TH1F   *histFi(0), *histFiG(0), *histFiB(0), *histLD(0), *histNn(0),*histNnbfgs(0),*histNnbnn(0);
@@ -226,7 +226,7 @@ void classification_application( TString myMethodList = "" )
    if (Use["MLPBNN"])        histNnbnn   = new TH1F( "MVA_MLPBNN",        "MVA_MLPBNN",        nbin, -1.25, 1.5 );
    if (Use["CFMlpANN"])      histNnC     = new TH1F( "MVA_CFMlpANN",      "MVA_CFMlpANN",      nbin,  0, 1 );
    if (Use["TMlpANN"])       histNnT     = new TH1F( "MVA_TMlpANN",       "MVA_TMlpANN",       nbin, -1.3, 1.3 );
-   if (Use["BDT"])           histBdt     = new TH1F( "MVA_BDT",           "MVA_BDT",           nbin, -1, 1 );
+   if (Use["BDT"])           histBdt     = new TH1F( "MVA_BDT",           "MVA_BDT",           nbin, -1.01, 1.01 );
    if (Use["BDTD"])          histBdtD    = new TH1F( "MVA_BDTD",          "MVA_BDTD",          nbin, -1, 1 );
    if (Use["BDTG"])          histBdtG    = new TH1F( "MVA_BDTG",          "MVA_BDTG",          nbin, -1.0, 1.0 );
    if (Use["RuleFit"])       histRf      = new TH1F( "MVA_RuleFit",       "MVA_RuleFit",       nbin, -2.0, 2.0 );
@@ -257,11 +257,11 @@ void classification_application( TString myMethodList = "" )
    // we'll later on use only the "signal" events for the test in this example.
    //
 
-TString isotope = "radon";
+TString isotope = "radon_Ecut";
 
    TFile *input(0);
-
-   TString fname = "../data/trees_source_2e_application/" + isotope + ".root";
+   // §§§§§
+   TString fname = "../data/source/C/" + isotope + ".root";
 
    input = TFile::Open( fname ); // check if file in local directory exists
 
@@ -287,9 +287,9 @@ TString isotope = "radon";
    Double_t br_2e_electrons_energy_sum = 1;
    Double_t br_2e_electrons_internal_probability = 1;
    Double_t br_2e_electrons_external_probability = 1;
-   // Double_t br_2e_electrons_vertices_distance_y = 1;
-   // Double_t br_2e_electrons_vertices_distance_z = 1;
-   Double_t br_2e_electrons_vertices_probability = 1;
+   Double_t br_2e_electrons_vertices_distance_y = 1;
+   Double_t br_2e_electrons_vertices_distance_z = 1;
+   // Double_t br_2e_electrons_vertices_probability = 1;
    // Double_t br_2e_electrons_vertex_position_y = 1;
    // Double_t br_2e_electrons_vertex_position_z = 1;
    Double_t br_2e_electrons_cos_angle = 1;
@@ -303,9 +303,9 @@ TString isotope = "radon";
    theTree->SetBranchAddress( "2e_electrons_energy_difference", &br_2e_electrons_energy_difference);
    theTree->SetBranchAddress( "2e_electrons_internal_probability", &br_2e_electrons_internal_probability);
    theTree->SetBranchAddress( "2e_electrons_external_probability", &br_2e_electrons_external_probability);
-   // theTree->SetBranchAddress( "2e_electrons_vertices_distance_y", &br_2e_electrons_vertices_distance_y);
-   // theTree->SetBranchAddress( "2e_electrons_vertices_distance_z", &br_2e_electrons_vertices_distance_z);
-   theTree->SetBranchAddress( "2e_electrons_vertices_probability", &br_2e_electrons_vertices_probability);
+   theTree->SetBranchAddress( "2e_electrons_vertices_distance_y", &br_2e_electrons_vertices_distance_y);
+   theTree->SetBranchAddress( "2e_electrons_vertices_distance_z", &br_2e_electrons_vertices_distance_z);
+   // theTree->SetBranchAddress( "2e_electrons_vertices_probability", &br_2e_electrons_vertices_probability);
    // theTree->SetBranchAddress( "2e_electrons_vertex_position_y", &br_2e_electrons_vertex_position_y);
    // theTree->SetBranchAddress( "2e_electrons_vertex_position_z", &br_2e_electrons_vertex_position_z);
    theTree->SetBranchAddress( "2e_electrons_cos_angle", &br_2e_electrons_cos_angle);
@@ -322,12 +322,20 @@ TString isotope = "radon";
    std::cout << "--- Processing: " << theTree->GetEntries() << " events" << std::endl;
    TStopwatch sw;
    sw.Start();
-   for (Long64_t ievt=0; ievt<theTree->GetEntries();ievt++) {
+   // for (Long64_t ievt=0; ievt<theTree->GetEntries();ievt++) {
 
-      if (ievt%1000 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
+   Long64_t nevent =0;
+
+   // if(isotope == "2nu_full")
+   //   nevent = 1000000;
+   // else
+   nevent = theTree->GetEntries();
+
+   for (Long64_t ievt=0; ievt<nevent;ievt++) {
+
+      if (ievt%10000 == 0) std::cout << "--- ... Processing event: " << ievt << std::endl;
 
       theTree->GetEntry(ievt);
-
 
       electron_minimal_energy = (Float_t) br_2e_electron_minimal_energy;
       electron_maximal_energy = (Float_t) br_2e_electron_minimal_energy;
@@ -335,9 +343,9 @@ TString isotope = "radon";
       electrons_energy_difference = (Float_t) br_2e_electrons_energy_difference;
       electrons_internal_probability = (Float_t) br_2e_electrons_internal_probability;
       electrons_external_probability = (Float_t) br_2e_electrons_external_probability;
-      // electrons_vertices_distance_y = (Float_t) br_2e_electrons_vertices_distance_y;
-      // electrons_vertices_distance_z = (Float_t) br_2e_electrons_vertices_distance_z;
-      electrons_vertices_probability = (Float_t) br_2e_electrons_vertices_probability;
+      electrons_vertices_distance_y = (Float_t) br_2e_electrons_vertices_distance_y;
+      electrons_vertices_distance_z = (Float_t) br_2e_electrons_vertices_distance_z;
+      // electrons_vertices_probability = (Float_t) br_2e_electrons_vertices_probability;
       // electrons_vertex_position_y = (Float_t) br_2e_electrons_vertex_position_y;
       // electrons_vertex_position_z = (Float_t) br_2e_electrons_vertex_position_z;
       electrons_cos_angle = (Float_t) br_2e_electrons_cos_angle;
@@ -433,8 +441,8 @@ TString isotope = "radon";
    }
 
    // --- Write histograms
-
-   TString file_target = "./bdt_scores/" + isotope + ".root";
+   // §§§§§
+   TString file_target = "./bdt_scores/test_consistency/test_" + isotope + ".root";
    TFile *target  = new TFile( file_target,"RECREATE" );
 
    if (Use["Likelihood"   ])   histLk     ->Write();

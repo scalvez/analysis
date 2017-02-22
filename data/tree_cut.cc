@@ -15,6 +15,10 @@ void tree_cut() {
   // // TString output_file = "./trees_source_2e/0nu.root";
   // TString output_file = "./trees_topo_cuts_2e/0nu.root";
 
+  TString input_file = "./raw_trees/0nu_rhc_lambda_0_2/merge.root";
+  TString output_file = "./trees_source_2e/0nu_rhc.root";
+  // TString output_file = "./trees_topo_cuts_2e/0nu_rhc.root";
+
   // TString input_file = "./raw_trees/2nu_full/merge.root";
   // // TString output_file = "./trees_source_2e/2nu_full.root";
   // TString output_file = "./trees_topo_cuts_2e/2nu_full.root";
@@ -31,8 +35,8 @@ void tree_cut() {
   // // TString output_file = "./trees_source_2e/bi214.root";
   // TString output_file = "./trees_topo_cuts_2e/bi214.root";
 
-  TString input_file = "./raw_trees/radon/merge.root";
-  TString output_file = "./trees_source_2e/radon.root";
+  // TString input_file = "./raw_trees/radon/merge.root";
+  // // TString output_file = "./trees_source_2e/radon.root";
   // TString output_file = "./trees_topo_cuts_2e/radon.root";
 
   TFile *f = TFile::Open(input_file);

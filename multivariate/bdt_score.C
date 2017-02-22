@@ -24,21 +24,15 @@
 
 void bdt_score()
 {
-bool counts = true;
 
-  // TFile * f_0nu = TFile::Open("old_0nu.root");
-  // // TFile * f_2nu = TFile::Open("2nu_1M.root");
-  // TFile * f_2nu = TFile::Open("old_2nu.root");
-  // TFile * f_tl208 = TFile::Open("tl208.root");
-  // TFile * f_bi214 = TFile::Open("bi214.root");
-  // // TFile * f_radon = TFile::Open("radon.root");
+  bool counts = true;
 
-  TFile * f_0nu = TFile::Open("./bdt_scores/0nu_1M.root");
+  TFile * f_0nu = TFile::Open("./bdt_scores/test_consistency/test_0nu_Ecut.root");
   // TFile * f_2nu = TFile::Open("2nu_1M.root");
-  TFile * f_2nu = TFile::Open("./bdt_scores/2nu_full_2MeV.root");
-  TFile * f_tl208 = TFile::Open("./bdt_scores/tl208.root");
-  TFile * f_bi214 = TFile::Open("./bdt_scores/bi214.root");
-  TFile * f_radon = TFile::Open("./bdt_scores/radon.root");
+  TFile * f_2nu = TFile::Open("./bdt_scores/test_consistency/test_2nu_full_Ecut.root");
+  TFile * f_tl208 = TFile::Open("./bdt_scores/test_consistency/test_tl208_Ecut.root");
+  TFile * f_bi214 = TFile::Open("./bdt_scores/test_consistency/test_bi214_Ecut.root");
+  TFile * f_radon = TFile::Open("./bdt_scores/test_consistency/test_radon_Ecut.root");
 
   TH1F *h_0nu_bdt = (TH1F*)f_0nu->Get("MVA_BDT");
   TH1F *h_2nu_bdt = (TH1F*)f_2nu->Get("MVA_BDT");
@@ -59,9 +53,9 @@ bool counts = true;
   h_radon_bdt->Sumw2();
 
   if(counts)
-    TFile *f_output= new TFile("./bdt_scores/bdt_scores_counts.root","RECREATE");
+    TFile *f_output= new TFile("./bdt_scores/test_consistency/bdt_scores_counts_test_Ecut.root","RECREATE");
   else
-    TFile *f_output= new TFile("./bdt_scores/bdt_scores.root","RECREATE");
+    TFile *f_output= new TFile("./bdt_scores/test_consistency/bdt_scores_test_Ecut.root","RECREATE");
 
   if(counts)
     h_0nu_bdt->Scale(1./h_0nu_bdt->GetEntries());
@@ -163,9 +157,9 @@ bool counts = true;
 
   c1->Write();
 
-  TH1F *h_data = new TH1F("h_data","h_data",100,-1,1) ;
+  TH1F *h_data = new TH1F("h_data","h_data",202,-1.01,1.01) ;
 
-  for(unsigned int i = 1; i<=100; ++i) {
+  for(unsigned int i = 1; i<=202; ++i) {
 
     h_data->SetBinContent(i,h_0nu_bdt->GetBinContent(i) +
                           h_2nu_bdt->GetBinContent(i)   +

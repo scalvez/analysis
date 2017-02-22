@@ -58,8 +58,8 @@
 
 int classification_simple( TString myMethodList = "" )
 {
-  TString output_name = "TMVA_test.root";
-  TString factory_name = "classification_simple_test";
+  TString output_name = "TMVA_simple.root";
+  TString factory_name = "classification_simple";
 
   // The explicit loading of the shared libTMVA is done in TMVAlogon.C, defined in .rootrc
    // if you use your private .rootrc, or run from a different directory, please copy the
@@ -183,7 +183,7 @@ int classification_simple( TString myMethodList = "" )
    // TMVA::Factory *factory = new TMVA::Factory( "TMVAClassification", outputFile,
    //                                             "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
    TMVA::Factory *factory = new TMVA::Factory( factory_name, outputFile,
-                                               "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;G,D:AnalysisType=Classification" );
+                                               "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
 
    // If you wish to modify default settings
    // (please check "src/Config.h" to see all available global options)
@@ -205,8 +205,8 @@ int classification_simple( TString myMethodList = "" )
    // factory->AddVariable( "2e_electrons_vertex_position_y", "Electrons vertex position in Y","",'F' );
    // factory->AddVariable( "2e_electrons_vertex_position_z", "Electrons vertex position in Z","",'F' );
    factory->AddVariable( "2e_electrons_cos_angle", "Electrons cos(angle)", "", 'F' );
-   // factory->AddVariable( "2e_electron_Emin_track_length", "Electron of minimal energy track length", "mm", 'F' );
-   // factory->AddVariable( "2e_electron_Emax_track_length", "Electron of maximal energy track length", "mm", 'F' );
+   factory->AddVariable( "2e_electron_Emin_track_length", "Electron of minimal energy track length", "mm", 'F' );
+   factory->AddVariable( "2e_electron_Emax_track_length", "Electron of maximal energy track length", "mm", 'F' );
 
    // You can add so-called "Spectator variables", which are not used in the MVA training,
    // but will appear in the final "TestTree" produced by TMVA. This TestTree will contain the
@@ -215,9 +215,9 @@ int classification_simple( TString myMethodList = "" )
 
    // Read training and test data
    // (it is also possible to use ASCII format as input -> see TMVA Users Guide)
-   TString fname_signal = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/0nu_2M.root";
+   TString fname_signal = "$SW_WORK_DIR/analysis/data/source/AB/0nu.root";
    // TString fname_background_2nu = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/2nu.root";
-   TString fname_background_2nu = "$SW_WORK_DIR/analysis/data/trees_source_2e_training/2nu_full_2M.root";
+   TString fname_background_2nu = "$SW_WORK_DIR/analysis/data/source/AB/2nu_Ecut.root";
 
    // if (gSystem->AccessPathName( fname ))  // file does not exist in local directory
    //    gSystem->Exec("curl -O http://root.cern.ch/files/tmva_class_example.root");
@@ -234,7 +234,6 @@ int classification_simple( TString myMethodList = "" )
 
    // global event weights per tree (see below for setting event-wise weights)
    Double_t signalWeight     = 1.;
-
    Double_t backgroundWeight_2nu = 1.;
 
    // You can add an arbitrary number of signal or background trees
@@ -286,8 +285,10 @@ int classification_simple( TString myMethodList = "" )
    // factory->SetBackgroundWeightExpression( "weight" );
 
    // Apply additional cuts on the signal and background samples (can be different)
-   TCut mycuts = "2e_electrons_energy_sum > 2"; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
-   TCut mycutb = "2e_electrons_energy_sum > 2"; // for example: TCut mycutb = "abs(var1)<0.5";
+   // TCut mycuts = "2e_electrons_energy_sum > 2"; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
+   // TCut mycutb = "2e_electrons_energy_sum > 2"; // for example: TCut mycutb = "abs(var1)<0.5";
+   TCut mycuts = ""; // for example: TCut mycuts = "abs(var1)<0.5 && abs(var2-0.5)<1";
+   TCut mycutb = ""; // for example: TCut mycutb = "abs(var1)<0.5";
 
    // Tell the factory how to use the training and testing events
    //
@@ -474,7 +475,7 @@ int classification_simple( TString myMethodList = "" )
 
    if (Use["BDT"])  // Adaptive Boost
      factory->BookMethod( TMVA::Types::kBDT, "BDT",
-                          "!H:!V:NTrees=1000:MinNodeSize=0.005%:MaxDepth=5:BoostType=AdaBoost:SeparationType=GiniIndex:nCuts=400" );
+                          "!H:!V:NTrees=800:MinNodeSize=1%:MaxDepth=3:BoostType=RealAdaBoost:AdaBoostBeta=0.2:SeparationType=GiniIndex:nCuts=400" );
 
    // if (Use["BDT"])  // Adaptive Boost
    //    factory->BookMethod( TMVA::Types::kBDT, "BDT",

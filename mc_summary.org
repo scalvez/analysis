@@ -1,69 +1,106 @@
-| Isotope              | MC size | Details                 | Status              | DL |
-|                      |         |                         |                     |    |
-| 0nu_mm               |     1e6 | 50 * 20k                | OK  xg              |    |
-|                      |         |                         |                     |    |
-| 2nu                  |     1e7 | 100 * 100k              | OK  sc              |    |
-|                      |         |                         |                     |    |
-| 208Tl source         |     1e8 | 400 * 250k   (1e8 io)   | OK  xg              |    |
-|                      |         |                         |                     |    |
-| 214Bi source         |     1e8 | 400 * 250k   (1e8 io)   | OK  xg              |    |
-|                      |         |                         |                     |    |
-| Radon                |         |                         |                     |    |
-| 214Bi wires surface  |     1e8 | 400 * 250k              | OK xg               |    |
-|                      |         |                         |                     |    |
-| 214Bi scint. surface |     1e8 | 400 * 250k              | OK xg               |    |
-|                      |         |                         |                     |    |
-| 208Tl PMT glass bulk |     1e9 | 500*2M                  | OK sc               |    |
-|                      |         |                         |                     |    |
-| 214Bi PMT glass bulk |     1e9 | 500*2M                  | OK xg               |    |
-|                      |         |                         |                     |    |
-| 40K PMT glass bulk   |     1e9 | 500*2M                  | OK sc               |    |
-|                      |         |                         |                     |    |
-| Extra  (no io)       |         |                         |                     |    |
-|                      |         |                         |                     |    |
-| 214Bi scint. surface |     1e7 | 250 * 400k              | OK xg               |    |
-|                      |         |                         |                     |    |
-| 214Bi wires surface  |     2e8 | 2 * 400 * 250k          | OK sc               |    |
-| 214Bi wires surface  |     3e8 | 3 * 400 * 250k          | xg  --- in progress |    |
-| 214Bi wires surface  |     1e8 | 400 * 250k              | sc  --- in progress |    |
-|                      |         |                         |                     |    |
-| 2nu_full             |     1e8 | 1000 * 100k             | OK sc               | OK |
-|                      |         |                         |                     |    |
-| 2nu_full             |     1e8 | 1000 * 100k             | OK xg               | OK |
-|                      |         |                         |                     |    |
-| exc_2_1              |     1e8 | 1000 * 100k             | OK sc               |    |
-|                      |         |                         |                     |    |
-| 0nu_M1               |     1e8 | 1000 * 100k             | OK xg               |    |
-|                      |         |                         |                     |    |
-| 208Tl source         |     4e8 | 4 * 400 * 250k          | OK xg               |    |
-|                      |         |                         |                     |    |
-| 214Bi source         |     4e8 | 4 * 400 * 250k          | OK sc               |    |
-|                      |         |                         |                     |    |
-| 2nu_full             |     1e8 | 1000 * 100k             | OK sc               | OK |
-| 2nu_full             |     1e8 | 1000 * 100k             | sc --- in progress  |    |
-|                      |         |                         |                     |    |
-| 2nu_full             |     1e8 | 1000 * 100k             | OK xg               | OK |
-|                      |         |                         |                     |    |
-| 0nu                  |     1e8 | 1000 * 100k             | OK sc               | OK |
-|                      |         |                         |                     |    |
-| ------ OLD           |         |                         |                     |    |
-|                      |         |                         |                     |    |
-| 214Bi scint. surface |    10e9 | 3*200*500k + 7*250*400k | Partly,             |    |
-|                      |         |                         | needs reprocessing  |    |
-| Main wall 8"         |         |                         |                     |    |
-| 208Tl PMT glass bulk |     1e9 | 500*2M                  | OK                  |    |
-| 214Bi PMT glass bulk |     1e9 | 500*2M                  | OK                  |    |
-| 40K PMT glass bulk   |     1e9 | 500*2M                  | OK                  |    |
-|                      |         |                         |                     |    |
-|                      |         |                         |                     |    |
-| TMVA study           |      MC | 2e_source / eff         | training app        |    |
-|                      |         |                         |                     |    |
-| 0nu                  |     1e8 | 2.634477e7 / 2.634e-1   | 2M /                |    |
-| 2nu full             |     4e8 | 3.586679e7 / 8.967e-2   |                     |    |
-| tl208                |     4e8 | 423365 / 1.058e-3       | 200k / 223k         |    |
-| bi214                |     4e8 | 656896 / 1.642e-3       | 300k / 356k         |    |
-| radon                |     2e8 | 39012 / 1.951e-4        | 20k / 19k           |    |
+| Isotope              | MC size | Details                  | Status             | DL |
+|                      |         |                          |                    |    |
+|                      |         |                          |                    |    |
+| 0nu_mm               |     1e6 | 50 * 20k                 | OK  xg             |    |
+|                      |         |                          |                    |    |
+| 2nu                  |     1e7 | 100 * 100k               | OK  sc             |    |
+|                      |         |                          |                    |    |
+| final 2nu_full       |    12e8 | 5000 sc, 5000 xg, 2000ls |                    |    |
+|                      |         |                          |                    |    |
+| 208Tl source         |     1e8 | 400 * 250k   (1e8 io)    | OK  xg             |    |
+|                      |         |                          |                    |    |
+| 214Bi source         |     1e8 | 400 * 250k   (1e8 io)    | OK  xg             |    |
+|                      |         |                          |                    |    |
+| Radon                |         |                          |                    |    |
+| 214Bi wires surface  |     1e8 | 400 * 250k               | OK xg              |    |
+|                      |         |                          |                    |    |
+| 214Bi scint. surface |     1e8 | 400 * 250k               | OK xg              |    |
+|                      |         |                          |                    |    |
+| 208Tl PMT glass bulk |     1e9 | 500*2M                   | OK sc              |    |
+|                      |         |                          |                    |    |
+| 214Bi PMT glass bulk |     1e9 | 500*2M                   | OK xg              |    |
+|                      |         |                          |                    |    |
+| 40K PMT glass bulk   |     1e9 | 500*2M                   | OK sc              |    |
+|                      |         |                          |                    |    |
+| Extra  (no io)       |         |                          |                    |    |
+|                      |         |                          |                    |    |
+| 214Bi scint. surface |     1e7 | 250 * 400k               | OK xg              |    |
+|                      |         |                          |                    |    |
+| 214Bi wires surface  |     2e8 | 2 * 400 * 250k           | OK sc              |    |
+| 214Bi wires surface  |     3e8 | 3 * 400 * 250k           | OK xg              |    |
+| 214Bi wires surface  |     1e8 | 400 * 250k               | OK sc              |    |
+|                      |         |                          |                    |    |
+| 2nu_full             |     1e8 | 1000 * 100k              | OK sc              | OK |
+|                      |         |                          |                    |    |
+| 2nu_full             |     1e8 | 1000 * 100k              | OK xg              | OK |
+|                      |         |                          |                    |    |
+| exc_2_1              |     1e8 | 1000 * 100k              | OK sc              |    |
+|                      |         |                          |                    |    |
+| 0nu_M1               |     1e8 | 1000 * 100k              | OK xg              |    |
+|                      |         |                          |                    |    |
+| 208Tl source         |     4e8 | 4 * 400 * 250k           | OK xg              |    |
+|                      |         |                          |                    |    |
+| 214Bi source         |     4e8 | 4 * 400 * 250k           | OK sc              |    |
+|                      |         |                          |                    |    |
+| 2nu_full             |     1e8 | 1000 * 100k              | OK sc              | OK |
+| 2nu_full             |     1e8 | 1000 * 100k              | OK +5 sc           |    |
+| 2nu_full             |     1e8 | 1000 * 100k              | sc --in progress   | OK |
+|                      |         |                          |                    |    |
+| 2nu_full             |     1e8 | 1000 * 100k              | OK xg              | OK |
+|                      |         |                          |                    |    |
+| 0nu                  |     1e8 | 1000 * 100k              | OK sc              | OK |
+|                      |         |                          |                    |    |
+| ------ OLD           |         |                          |                    |    |
+|                      |         |                          |                    |    |
+| 214Bi scint. surface |    10e9 | 3*200*500k + 7*250*400k  | Partly,            |    |
+|                      |         |                          | needs reprocessing |    |
+| Main wall 8"         |         |                          |                    |    |
+| 208Tl PMT glass bulk |     1e9 | 500*2M                   | OK                 |    |
+| 214Bi PMT glass bulk |     1e9 | 500*2M                   | OK                 |    |
+| 40K PMT glass bulk   |     1e9 | 500*2M                   | OK                 |    |
+|                      |         |                          |                    |    |
+| New PMT              |         |                          |                    |    |
+|                      |         |                          |                    |    |
+| 208Tl PMT glass bulk |         | 1 *1000*2M               | sc                 |    |
+| 214Bi PMT glass bulk |         | 1 *1000*2M               | xg                 |    |
+| 40K PMT glass bulk   |         | 1 *1000*2M               | ls                 |    |
+|                      |         |                          |                    |    |
+| TMVA study           |      MC | 2e_source / eff          | training app       |    |
+|                      |         |                          |                    |    |
+| 0nu                  |     1e8 | 2.634477e7 / 2.634e-1    | 2M /               |    |
+| 2nu full             |     4e8 | 3.586679e7 / 8.967e-2    |                    |    |
+| tl208                |     4e8 | 423365 / 1.058e-3        | 200k / 223k        |    |
+| bi214                |     4e8 | 656896 / 1.642e-3        | 300k / 356k        |    |
+| radon                |     2e8 | 39012 / 1.951e-4         | 20k / 19k          |    |
+|                      |         |                          |                    |    |
+| Source               |         |                          |                    |    |
+| 0nubb                |         |                          | 2.6e7              |    |
+| 2nu full             |         |                          | 3.5e7              |    |
+| 2nu 2MeV             |         |                          | 2.1e6              |    |
+| tl208                |         |                          | 423k               |    |
+| bi214                |         |                          | 650k               |    |
+| radon                |         |                          | 136k               |    |
+|                      |         |                          |                    |    |
+| Topo cuts            |         |                          |                    |    |
+| 0nubb                |         |                          | 2.379e7            |    |
+| 2nu 2MeV             |         |                          |                    |    |
+| 2nu full             |         |                          | 3.152e7            |    |
+| tl208                |         |                          | 351k               |    |
+| bi214                |         |                          | 552k               |    |
+| radon                |         |                          | 40k                |    |
+|                      |         |                          |                    |    |
+|                      |         |                          |                    |    |
+| 0nubb                |         |                          | 2M / 1M            |    |
+| 2nu full             |         |                          | 1.8e7  / 476k      |    |
+| tl208                |         |                          | 200k  / 223k       |    |
+| bi214                |         |                          | 300k / 356k        |    |
+| radon                |         |                          | 37.5k / 37.5k      |    |
+|                      |         |                          |                    |    |
+|                      |         |                          |                    |    |
+|                      |         |                          |                    |    |
 
+
+Need to reprocess all for 2e1g topology before 18 january 2017
 
 NEMO3 External background model : Cf James Mott p121 Table 7.1
 

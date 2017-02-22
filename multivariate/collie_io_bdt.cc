@@ -8,14 +8,12 @@ int main(int argc, char* argv[]) {
   /////////////////////////////////////////
   CollieIOFile* cfile = new CollieIOFile();
   // Specify outputfile and channel name
-  cfile->initFile("io_file_bdt.root", "0nu");
+  cfile->initFile("./collie_io/cc/io_file_bdt_confC_D.root", "0nu");
 
   // Define your input histograms
-  // double Xmin = -0.8;
-  // double Xmax = 0.8;
-  double Xmin = -1;
-  double Xmax = 1;
-  int Nbins = 100;
+  double Xmin = -1.01;
+  double Xmax = 1.01;
+  int Nbins = 202;
 
   cfile->setInputHist(Xmin,Xmax,Nbins);
 
@@ -38,7 +36,7 @@ int main(int argc, char* argv[]) {
   bkgdNames.push_back("radon");
   cfile->createChannel(bkgdNames);
 
-  TFile infile("./bak_bdt_scores/bdt_scores_counts.root");
+  TFile infile("./bdt_scores/cc/0nu_rhc/bdt_scores_counts_confC_D.root");
   TH1D* sig = (TH1D*)infile.Get("0nu");
   TH1D* bkgd1 = (TH1D*)infile.Get("2nu");
   TH1D* bkgd2 = (TH1D*)infile.Get("tl208");
@@ -117,7 +115,7 @@ int main(int argc, char* argv[]) {
     //   Read the instructions in collie/io/include/CollieIOFile.hh if you're in doubt
     // cfile->createFlatSigSystematic("Lumi",0.01,0.01,m);
 
-    double eff_error = 0.1;
+    double eff_error = 0.05;
 
     //test
     cfile->createFlatSigSystematic("Eff",eff_error,eff_error,m);

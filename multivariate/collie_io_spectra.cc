@@ -8,12 +8,12 @@ int main(int argc, char* argv[]) {
   /////////////////////////////////////////
   CollieIOFile* cfile = new CollieIOFile();
   // Specify outputfile and channel name
-  cfile->initFile("io_file_spectra.root", "0nu");
+  cfile->initFile("./collie_io/spectra/io_file_spectra_CD_Ecut.root", "0nu");
 
   // Define your input histograms
-  double Xmin = 0;
+  double Xmin = 2;
   double Xmax = 5;
-  int Nbins = 100;
+  int Nbins = 60;
 
   cfile->setInputHist(Xmin,Xmax,Nbins);
 
@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
   bkgdNames.push_back("radon");
   cfile->createChannel(bkgdNames);
 
-  TFile infile("./bak_spectra/spectra_counts.root");
+  TFile infile("./spectra/source/CD/spectra_counts_Ecut.root");
   TH1D* sig = (TH1D*)infile.Get("0nu");
   TH1D* bkgd1 = (TH1D*)infile.Get("2nu");
   TH1D* bkgd2 = (TH1D*)infile.Get("tl208");
@@ -115,7 +115,7 @@ int main(int argc, char* argv[]) {
     //   Read the instructions in collie/io/include/CollieIOFile.hh if you're in doubt
     // cfile->createFlatSigSystematic("Lumi",0.01,0.01,m);
 
-    double eff_error = 0.1;
+    double eff_error = 0.05;
 
     //test
     cfile->createFlatSigSystematic("Eff",eff_error,eff_error,m);

@@ -48,14 +48,14 @@ void limit_roostats_bdt() {
 
   RooMsgService::instance().setGlobalKillBelow(RooFit::WARNING);
 
-  TFile *infile = TFile::Open("./bdt_scores.root");
+  TFile *infile = TFile::Open("./bdt_scores/source/A/bdt_scores.root");
   TH1D* sig = (TH1D*)infile->Get("0nu");
   TH1D* bkg1 = (TH1D*)infile->Get("2nu");
   TH1D* bkg2 = (TH1D*)infile->Get("tl208");
   TH1D* bkg3 = (TH1D*)infile->Get("bi214");
   TH1D* bkg4 = (TH1D*)infile->Get("radon");
 
-  //   TFile *infile_sig = TFile::Open("$SW_WORK_DIR/analysis/sensitivity/data/pdf/0nu_pdf_trunc.root");
+  // TFile *infile_sig = TFile::Open("$SW_WORK_DIR/analysis/sensitivity/data/pdf/0nu_pdf_trunc.root");
   // TH1D* sig = (TH1D*)infile_sig->Get("2e_electrons_energy_sum");
 
   // TFile *infile_bkg1 = TFile::Open("$SW_WORK_DIR/analysis/sensitivity/data/pdf/2nu_pdf_trunc.root");
@@ -71,18 +71,22 @@ void limit_roostats_bdt() {
   // TH1D* bkg4 = (TH1D*)infile_bkg4->Get("2e_electrons_energy_sum");
 
   // TString calculator = "simple_fc";
-  TString calculator = "bayesian";
+  // TString calculator = "bayesian";
   // TString calculator = "plc";
-  // TString calculator = "mcmc";
+  TString calculator = "mcmc";
   // TString calculator = "fc";
+  // TString calculator = "simple_fc_bis";
+  // TString calculator = "my_fc";
 
   std::vector<double> limit_vector;
+  std::vector<double> nwindow;
+
   double lim = 0;
   double count_lim = 0;
 
-  double n_pseudo = 1;
+  double n_pseudo = 100
   for(auto i = 1; i<=n_pseudo; ++i) {
-    if(i%10==0)
+    if(i%1==0)
       std::cout << std::endl << " -------Pseudo experiment n° " << i << std::endl;
 
     // Recreate all variables, model and workspace, otherwise initialization issue
@@ -157,70 +161,79 @@ void limit_roostats_bdt() {
     if(calculator.EqualTo("simple_fc")) {
       RooDataHist *h_data = data->binnedClone();
 
-      double best_lower_limit = 99;
-      for(double i = -0.5; i<=1;i+=0.01) {
-        TString cut = "score>"+ std::to_string(i);
-        double n_window = h_data->sumEntries(cut);
-        double n_exp = h_data->sumEntries(cut);
-        TFeldmanCousins *simple_fc = new TFeldmanCousins(0.9);
-        lowerLimit = simple_fc->CalculateLowerLimit(n_window,n_exp);
-        upperLimit = simple_fc->CalculateUpperLimit(n_window,n_exp);
-        if(lowerLimit<best_lower_limit)
-          best_lower_limit = lowerLimit;
-      }
-      lowerLimit=best_lower_limit;
+      // double best_i = -1;
+      // double best_upper_limit = 99;
+      // for(double i = 0.3; i<=1;i+=0.7) {
+      //   TString cut = "score>"+ std::to_string(i);
+      //   double n_window = h_data->sumEntries(cut);
+      //   double n_exp = h_data->sumEntries(cut);
+      //   TFeldmanCousins *simple_fc = new TFeldmanCousins(0.9);
+      //   upperLimit = simple_fc->CalculateUpperLimit(n_window,n_exp);
+      //   if(upperLimit<best_upper_limit) {
+      //     best_upper_limit = upperLimit;
+      //     best_i = i;
+      //   }
+      // }
+      // upperLimit=best_upper_limit;
+
+      double n_window = h_data->sumEntries("score>0.4");
+      double n_exp = h_data->sumEntries("score>0.4");
+      TFeldmanCousins *simple_fc = new TFeldmanCousins(0.9);
+      lowerLimit = simple_fc->CalculateLowerLimit(n_window,n_exp);
+      upperLimit = simple_fc->CalculateUpperLimit(n_window,n_exp);
+
     }
     else if(calculator.EqualTo("bayesian")) {
-    // Bayesian calculator
-       BayesianCalculator bayesianCalc(*data,mc);
-       bayesianCalc.SetConfidenceLevel(confidenceLevel);
+      // Bayesian calculator
+      BayesianCalculator bayesianCalc(*data,mc);
+      bayesianCalc.SetConfidenceLevel(confidenceLevel);
 
-       // set the type of interval (not really needed for central which is the default)
-       // bayesianCalc.SetLeftSideTailFraction(0.5); // for central interval
-       bayesianCalc.SetLeftSideTailFraction(0.); // for upper limit
-       //bayesianCalc.SetShortestInterval(); // for shortest interval
+      // set the type of interval (not really needed for central which is the default)
+      // bayesianCalc.SetLeftSideTailFraction(0.5); // for central interval
+      bayesianCalc.SetLeftSideTailFraction(0.); // for upper limit
+      //bayesianCalc.SetShortestInterval(); // for shortest interval
 
 
-       // set the integration type (not really needed for the default ADAPTIVE)
-       // possible alternative values are  "VEGAS" , "MISER", or "PLAIN"  (MC integration from libMathMore)
-       // "TOYMC" (toy MC integration, work when nuisances exist and they have a constraints pdf)
-       TString integrationType = "";
+      // set the integration type (not really needed for the default ADAPTIVE)
+      // possible alternative values are  "VEGAS" , "MISER", or "PLAIN"  (MC integration from libMathMore)
+      // "TOYMC" (toy MC integration, work when nuisances exist and they have a constraints pdf)
+      TString integrationType = "";
 
-       // this is needed if using TOYMC
-       if (integrationType.Contains("TOYMC") ) {
-       RooAbsPdf * nuisPdf = RooStats::MakeNuisancePdf(mc, "nuisance_pdf");
-       if (nuisPdf) bayesianCalc.ForceNuisancePdf(*nuisPdf);
-       }
+      // this is needed if using TOYMC
+      if (integrationType.Contains("TOYMC") ) {
+        RooAbsPdf * nuisPdf = RooStats::MakeNuisancePdf(mc, "nuisance_pdf");
+        if (nuisPdf) bayesianCalc.ForceNuisancePdf(*nuisPdf);
+      }
 
-       bayesianCalc.SetIntegrationType(integrationType);
+      bayesianCalc.SetIntegrationType(integrationType);
 
-       // compute interval by scanning the posterior function
-       // it is done by default when computing shortest intervals
-       bayesianCalc.SetScanOfPosterior(100);
+      // compute interval by scanning the posterior function
+      // it is done by default when computing shortest intervals
+      bayesianCalc.SetScanOfPosterior(100);
 
-       RooRealVar* firstPOI = (RooRealVar*) mc.GetParametersOfInterest()->first();
+      RooRealVar* firstPOI = (RooRealVar*) mc.GetParametersOfInterest()->first();
 
-       SimpleInterval* interval = bayesianCalc.GetInterval();
-       if (!interval) {
-       cout << "Error computing Bayesian interval - exit " << endl;
-       return;
-       }
+      SimpleInterval* interval = bayesianCalc.GetInterval();
+      if (!interval) {
+        cout << "Error computing Bayesian interval - exit " << endl;
+        return;
+      }
 
-       lowerLimit = interval->LowerLimit();
-       upperLimit = interval->UpperLimit();
+      lowerLimit = interval->LowerLimit();
+      upperLimit = interval->UpperLimit();
 
-       cout << "\n90% interval on " <<firstPOI->GetName()<<" is : ["<<
-       lowerLimit << ", "<<
-       upperLimit <<"] "<<endl;
+      cout << "\n90% interval on " <<firstPOI->GetName()<<" is : ["<<
+        lowerLimit << ", "<<
+        upperLimit <<"] "<<endl;
 
-       if(i==1) {
-       // draw plot of posterior function
+      if(i==1) {
+        // draw plot of posterior function
 
-       TCanvas* c_bc = new TCanvas("IntervalPlot");
+        TCanvas* c_bc = new TCanvas("IntervalPlot");
 
-       RooPlot * plot_bc = bayesianCalc.GetPosteriorPlot();
-       if (plot_bc) plot_bc->Draw();
-       }
+        RooPlot * plot_bc = bayesianCalc.GetPosteriorPlot();
+        if (plot_bc) plot_bc->Draw();
+      }
 
     }        //  --- End Bayesian Calculator
     else if(calculator.EqualTo("plc")) {
@@ -232,8 +245,8 @@ void limit_roostats_bdt() {
       // find the interval on the first Parameter of Interest (nsig)
       RooRealVar* firstPOI = (RooRealVar*) mc.GetParametersOfInterest()->first();
 
-       lowerLimit = interval->LowerLimit(*firstPOI);
-       upperLimit = interval->UpperLimit(*firstPOI);
+      lowerLimit = interval->LowerLimit(*firstPOI);
+      upperLimit = interval->UpperLimit(*firstPOI);
 
       cout << "\n90% interval on " <<firstPOI->GetName()<<" is : ["<<
         lowerLimit << ", "<<
@@ -243,58 +256,68 @@ void limit_roostats_bdt() {
     else if (calculator.EqualTo("mcmc")) {
       //Bayesian MCMC
       // this proposal function seems fairly robust
-    SequentialProposal sp(0.1);
+      SequentialProposal sp(0.1);
 
-    MCMCCalculator mcmc(*data,mc);
-    mcmc.SetConfidenceLevel(confidenceLevel);
-    //  mcmc.SetProposalFunction(*pf);
-    mcmc.SetProposalFunction(sp);
-    mcmc.SetNumIters(100000);         // Metropolis-Hastings algorithm iterations
-    mcmc.SetNumBurnInSteps(50);       // first N steps to be ignored as burn-in
+      MCMCCalculator mcmc(*data,mc);
+      mcmc.SetConfidenceLevel(confidenceLevel);
+      //  mcmc.SetProposalFunction(*pf);
+      mcmc.SetProposalFunction(sp);
+      mcmc.SetNumIters(100000);         // Metropolis-Hastings algorithm iterations
+      mcmc.SetNumBurnInSteps(50);       // first N steps to be ignored as burn-in
 
-    // default is the shortest interval.  here use central
-    // mcmc.SetLeftSideTailFraction(0.5); // for central Bayesian interval
-    mcmc.SetLeftSideTailFraction(0); // for one-sided Bayesian interval
+      // default is the shortest interval.  here use central
+      // mcmc.SetLeftSideTailFraction(0.5); // for central Bayesian interval
+      mcmc.SetLeftSideTailFraction(0); // for one-sided Bayesian interval
 
-    RooRealVar* firstPOI = (RooRealVar*) mc.GetParametersOfInterest()->first();
-    //firstPOI->setMax(100);
+      RooRealVar* firstPOI = (RooRealVar*) mc.GetParametersOfInterest()->first();
+      //firstPOI->setMax(100);
 
-    MCMCInterval* interval = mcmc.GetInterval();
+      MCMCInterval* interval = mcmc.GetInterval();
 
-    // print out the iterval on the first Parameter of Interest
-    cout << "\n90% interval on " <<firstPOI->GetName()<<" is : ["<<
-    interval->LowerLimit(*firstPOI) << ", "<<
-    interval->UpperLimit(*firstPOI) <<"] "<<endl;
+      // print out the iterval on the first Parameter of Interest
+      cout << "\n90% interval on " <<firstPOI->GetName()<<" is : ["<<
+        interval->LowerLimit(*firstPOI) << ", "<<
+        interval->UpperLimit(*firstPOI) <<"] "<<endl;
 
-    // // make a plot of posterior function
-    // TCanvas* c1 = new TCanvas("IntervalPlot");
-    // MCMCIntervalPlot plot2(*interval);
-    // plot2.Draw();
+      // // make a plot of posterior function
+      // TCanvas* c1 = new TCanvas("IntervalPlot");
+      // MCMCIntervalPlot plot2(*interval);
+      // plot2.Draw();
 
-    upperLimit = interval->UpperLimit(*firstPOI);
+      upperLimit = interval->UpperLimit(*firstPOI);
     }// End MCMC
     else if (calculator.EqualTo("fc")) {
-    // Feldman-Cousins
+      // Feldman-Cousins
 
-    FeldmanCousins fc(*data, mc);
-    fc.SetConfidenceLevel( confidenceLevel);
-    fc.SetNBins(100); // number of points to test per parameter
-    fc.UseAdaptiveSampling(true); // make it go faster
+      FeldmanCousins fc(*data, mc);
+      fc.SetConfidenceLevel( confidenceLevel);
+      fc.SetNBins(100); // number of points to test per parameter
+      fc.UseAdaptiveSampling(true); // make it go faster
 
-    // Here, we consider only ensembles with 100 events
-    // The PDF could be extended and this could be removed
-    fc.FluctuateNumDataEntries(false);
+      // Here, we consider only ensembles with 100 events
+      // The PDF could be extended and this could be removed
+      fc.FluctuateNumDataEntries(false);
 
-    PointSetInterval* interval = (PointSetInterval*) fc.GetInterval();
-    RooRealVar* firstPOI = (RooRealVar*) mc.GetParametersOfInterest()->first();
+      PointSetInterval* interval = (PointSetInterval*) fc.GetInterval();
+      RooRealVar* firstPOI = (RooRealVar*) mc.GetParametersOfInterest()->first();
 
-    std::cout << "fc interval is ["<<
-    interval->LowerLimit(*firstPOI) << " , "  <<
-    interval->UpperLimit(*firstPOI) << "]" << endl;
+      std::cout << "fc interval is ["<<
+        interval->LowerLimit(*firstPOI) << " , "  <<
+        interval->UpperLimit(*firstPOI) << "]" << endl;
 
-    upperLimit = interval->UpperLimit(*firstPOI);
+      upperLimit = interval->UpperLimit(*firstPOI);
 
     }    // End of Feldman-Cousins
+    else if(calculator.EqualTo("simple_fc_bis")) {
+      RooDataHist *h_data = data->binnedClone();
+      double n_window = h_data->sumEntries("score>0.4");
+      // double n_exp = 0;
+      double n_exp = h_data->sumEntries("score>0.4");
+      TFeldmanCousins *simple_fc = new TFeldmanCousins(0.9);
+      lowerLimit = simple_fc->CalculateLowerLimit(n_window,n_exp);
+      upperLimit = simple_fc->CalculateUpperLimit(n_window,n_exp);
+      nwindow.push_back(n_window);
+    }  // End of Simple FC bis
     else {
       std::cout << "No Calculator specified " << std::endl;
       return;
@@ -315,7 +338,9 @@ void limit_roostats_bdt() {
   std::sort(limit_vector.begin(),limit_vector.end());
   std::cout << " median is " << limit_vector[int(limit_vector.size()/2)] << std::endl;
 
-  for(auto i=0; i<limit_vector.size();++i)
-    std::cout << limit_vector[i] << std::endl;
+  // for(auto i=0; i<limit_vector.size();++i)
+  //   std::cout << limit_vector[i] << std::endl;
+  // for(auto i=0; i<nwindow.size();++i)
+  //   std::cout << nwindow[i] << std::endl;
   return;
 }

@@ -30,16 +30,23 @@ namespace conf_sens {
 
   const double T_2nu = 9.0e19; //years
 
-  // source
-  const double eff_0nu_2e = 2.634e-1; // MM
-  // const double eff_0nu_2e = 0.161204; // rhc
-  // const double eff_2nu_full_range_2e = 0.10104;
-  // const double eff_2nu_2e = 2.1585e-1 / 25;
+  // // source
+  // const double eff_0nu_2e = 2.634e-1; // MM
+  // // const double eff_0nu_2e = 0.161204; // rhc
+  // // const double eff_2nu_full_range_2e = 0.10104;
+  // // const double eff_2nu_2e = 2.1585e-1 / 25;
   // const double eff_2nu_2e = 8.967e-2; //full
-  const double eff_2nu_2e = 8.967e-2 * 2.6435e-2; //full E>2 cut
-  const double eff_tl208_2e = 1.058e-3;
-  const double eff_bi214_2e = 1.642e-3;
-  const double eff_radon_2e = 1.951e-4;
+  // // const double eff_2nu_2e = 8.967e-2 * 2.6435e-2; //full E>2 cut
+  // const double eff_tl208_2e = 1.058e-3;
+  // const double eff_bi214_2e = 1.642e-3;
+  // const double eff_radon_2e = 1.953e-4;
+
+  // source Ecut (>2MeV)
+  const double eff_0nu_2e = 2.634e-1 * 9.61055e-1; // MM
+  const double eff_2nu_2e = 8.967e-2 * 2.644e-2; //full E>2 cut
+  const double eff_tl208_2e = 1.058e-3 * 9.8236e-2;
+  const double eff_bi214_2e = 1.642e-3 * 2.05268e-1;
+  const double eff_radon_2e = 1.953e-4 * 2.12588e-1;
 
   // topo
   // const double eff_0nu_2e = 2.363e-1; // MM

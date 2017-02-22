@@ -2,7 +2,7 @@
 #include "TMVA/Tools.h"
 #include "TMVA/TMVAGui.h"
 
-void gui(TString outfile = "TMVA.root") {
+void gui(TString outfile = "../bak_multivariate/TMVA.root") {
 
   TMVA::TMVAGui( outfile );
 

@@ -25,33 +25,15 @@
 
 void spectra_2e()
 {
-  bool counts = false;
+  // bool counts = false;
+  bool counts = true;
 
-  // TFile * f_0nu = TFile::Open("$SW_WORK_DIR/multivariate_analysis/data_0nu_mm.root");
-  // // TFile * f_2nu = TFile::Open("2nu_1M.root");
-  // TFile * f_2nu = TFile::Open("$SW_WORK_DIR/multivariate_analysis/data_2nu.root");
-  // TFile * f_tl208 = TFile::Open("$SW_WORK_DIR/multivariate_analysis/data_tl208.root");
-  // TFile * f_bi214 = TFile::Open("$SW_WORK_DIR/multivariate_analysis/data_bi214.root");
-  // // TFile * f_radon = TFile::Open("../data/trees_source_2e_application/radon.root");
-
-  TFile * f_0nu = TFile::Open("../data/trees_source_2e_application/0nu_1M.root");
-  // TFile * f_2nu = TFile::Open("../data/trees_source_2e_application/2nu_1M.root");
-  TFile * f_2nu = TFile::Open("../data/trees_source_2e_application/2nu_full_2MeV.root");
-  TFile * f_tl208 = TFile::Open("../data/trees_source_2e_application/tl208.root");
-  TFile * f_bi214 = TFile::Open("../data/trees_source_2e_application/bi214.root");
-  TFile * f_radon = TFile::Open("../data/trees_source_2e_application/radon.root");
-
-  // TFile * f_0nu = TFile::Open("../data/trees_topo_cuts_2e_application/0nu.root");
-  // TFile * f_2nu = TFile::Open("../data/trees_topo_cuts_2e_application/2nu_1M.root");
-  // TFile * f_tl208 = TFile::Open("../data/trees_topo_cuts_2e_application/tl208.root");
-  // TFile * f_bi214 = TFile::Open("../data/trees_topo_cuts_2e_application/bi214.root");
-  // TFile * f_radon = TFile::Open("../data/trees_topo_cuts_2e_application/radon.root");
-
-  // TFile * f_0nu = TFile::Open("../data/trees_source_2e/0nu.root");
-  // TFile * f_2nu = TFile::Open("../data/trees_source_2e/2nu.root");
-  // TFile * f_tl208 = TFile::Open("../data/trees_source_2e/tl208.root");
-  // TFile * f_bi214 = TFile::Open("../data/trees_source_2e/bi214.root");
-  // TFile * f_radon = TFile::Open("../data/trees_source_2e/radon.root");
+  TFile * f_0nu = TFile::Open("../data/source/CD/0nu_Ecut.root");
+  // TFile * f_2nu = TFile::Open("../data/source/CD/2nu_full.root");
+  TFile * f_2nu = TFile::Open("../data/source/CD/2nu_full_Ecut.root");
+  TFile * f_tl208 = TFile::Open("../data/source/CD/tl208_Ecut.root");
+  TFile * f_bi214 = TFile::Open("../data/source/CD/bi214_Ecut.root");
+  TFile * f_radon = TFile::Open("../data/source/CD/radon_Ecut.root");
 
   TTree *tree_0nu = (TTree*)f_0nu->Get("snemodata");
   TTree *tree_2nu = (TTree*)f_2nu->Get("snemodata");
@@ -59,11 +41,11 @@ void spectra_2e()
   TTree *tree_bi214 = (TTree*)f_bi214->Get("snemodata");
   TTree *tree_radon = (TTree*)f_radon->Get("snemodata");
 
-  TH1F *h_0nu = new TH1F("0nu","0nu",100,0,5);
-  TH1F *h_2nu = new TH1F("2nu","2nu",100,0,5);
-  TH1F *h_tl208 = new TH1F("tl208","tl208",100,0,5);
-  TH1F *h_bi214 = new TH1F("bi214","bi214",100,0,5);
-  TH1F *h_radon = new TH1F("radon","radon",100,0,5);
+  TH1F *h_0nu = new TH1F("0nu","0nu",60,2,5);
+  TH1F *h_2nu = new TH1F("2nu","2nu",60,2,5);
+  TH1F *h_tl208 = new TH1F("tl208","tl208",60,2,5);
+  TH1F *h_bi214 = new TH1F("bi214","bi214",60,2,5);
+  TH1F *h_radon = new TH1F("radon","radon",60,2,5);
 
   double electrons_energy_sum_0nu = 0;
   tree_0nu->SetBranchAddress("2e_electrons_energy_sum",&electrons_energy_sum_0nu);
@@ -118,9 +100,9 @@ void spectra_2e()
   h_radon->Sumw2();
 
   if (counts)
-    TFile *f_output= new TFile("./spectra/spectra_counts.root","RECREATE");
+    TFile *f_output= new TFile("./spectra/source/CD/spectra_counts_Ecut.root","RECREATE");
   else
-    TFile *f_output= new TFile("./spectra/spectra.root","RECREATE");
+    TFile *f_output= new TFile("./spectra/source/CD/spectra_Ecut.root","RECREATE");
 
   if(counts)
     h_0nu->Scale(1./h_0nu->GetEntries());
@@ -177,14 +159,14 @@ void spectra_2e()
   h_radon->SetName("radon");
   // h_radon->Rebin();
 
-  TH1F *h_data = new TH1F("h_data","h_data",100,0,5) ;
-  for(unsigned int i = 1; i<=100; ++i) {
+  TH1F *h_data = new TH1F("h_data","h_data",60,2,5) ;
+  for(unsigned int j = 1; j<=60; ++j) {
 
-    h_data->SetBinContent(i,h_0nu->GetBinContent(i) +
-                          h_2nu->GetBinContent(i)   +
-                          h_tl208->GetBinContent(i) +
-                          h_bi214->GetBinContent(i)
-                          + h_radon->GetBinContent(i)
+    h_data->SetBinContent(j,h_0nu->GetBinContent(j) +
+                          h_2nu->GetBinContent(j)   +
+                          h_tl208->GetBinContent(j) +
+                          h_bi214->GetBinContent(j) +
+                          h_radon->GetBinContent(j)
                           );
   }
 

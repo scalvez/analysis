@@ -24,7 +24,7 @@
 
 void sensitivity()
 {
-  TFile * f_bdt = TFile::Open("bdt_scores/bdt_scores.root");
+  TFile * f_bdt = TFile::Open("bdt_scores/source/B/bdt_scores.root");
 
   TH1F *h_0nu_bdt = (TH1F*)f_bdt->Get("0nu");
   TH1F *h_2nu_bdt = (TH1F*)f_bdt->Get("2nu");
@@ -33,7 +33,7 @@ void sensitivity()
   TH1F *h_radon_bdt = (TH1F*)f_bdt->Get("radon");
   THStack *h_stack_bdt_norm = (THStack*)f_bdt->Get("hs");
 
-  TFile * f_roi = TFile::Open("spectra/spectra.root");
+  TFile * f_roi = TFile::Open("spectra/source/A/spectra_Ecut.root");
 
   TH1F *h_0nu_roi = (TH1F*)f_roi->Get("0nu");
   TH1F *h_2nu_roi = (TH1F*)f_roi->Get("2nu");

@@ -48,14 +48,14 @@ void limit_roostats_roi() {
 
   RooMsgService::instance().setGlobalKillBelow(RooFit::WARNING);
 
-  TFile *infile = TFile::Open("./spectra.root");
-  TH1D* sig = (TH1D*)infile->Get("0nu");
-  TH1D* bkg1 = (TH1D*)infile->Get("2nu");
-  TH1D* bkg2 = (TH1D*)infile->Get("tl208");
-  TH1D* bkg3 = (TH1D*)infile->Get("bi214");
-  TH1D* bkg4 = (TH1D*)infile->Get("radon");
+  TFile *infile = TFile::Open("./spectra/source/D/spectra_Ecut.root");
+  TH1D *sig = (TH1D*)infile->Get("0nu");
+  TH1D *bkg1 = (TH1D*)infile->Get("2nu");
+  TH1D *bkg2 = (TH1D*)infile->Get("tl208");
+  TH1D *bkg3 = (TH1D*)infile->Get("bi214");
+  TH1D *bkg4 = (TH1D*)infile->Get("radon");
 
-  //   TFile *infile_sig = TFile::Open("$SW_WORK_DIR/analysis/sensitivity/data/pdf/0nu_pdf_trunc.root");
+  // TFile *infile_sig = TFile::Open("$SW_WORK_DIR/analysis/sensitivity/data/pdf/0nu_pdf_trunc.root");
   // TH1D* sig = (TH1D*)infile_sig->Get("2e_electrons_energy_sum");
 
   // TFile *infile_bkg1 = TFile::Open("$SW_WORK_DIR/analysis/sensitivity/data/pdf/2nu_pdf_trunc.root");
@@ -71,16 +71,18 @@ void limit_roostats_roi() {
   // TH1D* bkg4 = (TH1D*)infile_bkg4->Get("2e_electrons_energy_sum");
 
   // TString calculator = "simple_fc";
-  TString calculator = "bayesian";
+  // TString calculator = "bayesian";
   // TString calculator = "plc";
   // TString calculator = "mcmc";
-  // TString calculator = "fc";
+  TString calculator = "fc";
+  // TString calculator = "simple_fc_bis";
+  // TString calculator = "my_fc";
 
   std::vector<double> limit_vector;
   double lim = 0;
   double count_lim = 0;
 
-  double n_pseudo = 100;
+  double n_pseudo = 1;
   for(auto i = 1; i<=n_pseudo; ++i) {
     if(i%10==0)
       std::cout << std::endl << " -------Pseudo experiment n° " << i << std::endl;
@@ -155,6 +157,8 @@ void limit_roostats_roi() {
     double upperLimit = 0;
     if(calculator.EqualTo("simple_fc")) {
       RooDataHist *h_data = data->binnedClone();
+      // double n_window = h_data->sumEntries("E>2.7 && E<3");
+      // double n_exp = h_data->sumEntries("E>2.7 && E<3");
       double n_window = h_data->sumEntries("E>2.7");
       double n_exp = h_data->sumEntries("E>2.7");
       TFeldmanCousins *simple_fc = new TFeldmanCousins(0.9);
@@ -270,7 +274,7 @@ void limit_roostats_roi() {
     FeldmanCousins fc(*data, mc);
     fc.SetConfidenceLevel( confidenceLevel);
     fc.SetNBins(100); // number of points to test per parameter
-    fc.UseAdaptiveSampling(true); // make it go faster
+    // fc.UseAdaptiveSampling(true); // make it go faster
 
     // Here, we consider only ensembles with 100 events
     // The PDF could be extended and this could be removed
@@ -286,6 +290,25 @@ void limit_roostats_roi() {
     upperLimit = interval->UpperLimit(*firstPOI);
 
     }    // End of Feldman-Cousins
+    else if(calculator.EqualTo("simple_fc_bis")) {
+      RooDataHist *h_data = data->binnedClone();
+      // double n_window = h_data->sumEntries("E>2.7 && E<3");
+      // double n_exp = h_data->sumEntries("E>2.7 && E<3");
+      double n_window = h_data->sumEntries("E>2.7");
+      double n_exp = 0.8;
+      TFeldmanCousins *simple_fc = new TFeldmanCousins(0.9);
+      lowerLimit = simple_fc->CalculateLowerLimit(n_window,n_exp);
+      upperLimit = simple_fc->CalculateUpperLimit(n_window,n_exp);
+    }  // End of Simple FC bis
+    else if(calculator.EqualTo("my_fc")) {
+      RooDataHist *h_data = data->binnedClone();
+      // double n_window = h_data->sumEntries("E>2.7 && E<3");
+      // double n_exp = h_data->sumEntries("E>2.7 && E<3");
+      double n_window = h_data->sumEntries("E>2.7");
+      double n_exp = 0;
+
+      upperLimit = get_number_of_excluded_events(n_window);
+    }  // End of Simple FC bis
     else {
       std::cout << "No Calculator specified " << std::endl;
       return;

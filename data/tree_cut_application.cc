@@ -4,32 +4,48 @@
 
 void tree_cut_application() {
 
+
+  // int n_training =  0;
+  // int n_application = 1000000;
+
   // int n_training =  17933000;
   // int n_application = 17933000;
 
-  int n_training =  37500;
-  int n_application = 37500;
+  // int n_training =  211500;
+  // int n_application = 211500;
 
-  // TString input_file = "./raw_trees/0nu/merge.root";
+  // int n_training =  325000;
+  // int n_application = 325000;
+
+  // int n_training =  37500;
+  // int n_application = 37500;
+
+
+  TString input_file = "./raw_trees/0nu/merge.root";
   // TString output_file = "./trees_source_2e_application/0nu_1M_bis.root";
   // TString output_file = "./trees_topo_cuts_2e_application/0nu.root";
+  // TString output_file = "./source/application_odd/0nu.root";
 
   // TString input_file = "./raw_trees/2nu_full/merge.root";
   // // TString output_file = "./trees_source_2e_application/2nu_full.root";
-  // TString output_file = "./trees_source_2e_application/2nu_full_2MeV.root";
+  // // TString output_file = "./trees_source_2e_application/2nu_full_2MeV.root";
   // // TString output_file = "./trees_topo_cuts_2e_application/2nu.root";
+  // TString output_file = "./source/application_odd/2nu.root";
 
   // TString input_file = "./raw_trees/tl208/merge.root";
-  // TString output_file = "./trees_source_2e_application/tl208.root";
+  // // TString output_file = "./trees_source_2e_application/tl208.root";
   // // TString output_file = "./trees_topo_cuts_2e_application/tl208.root";
+  // TString output_file = "./source/application_odd/tl208.root";
 
   // TString input_file = "./raw_trees/bi214/merge.root";
-  // TString output_file = "./trees_source_2e_application/bi214.root";
+  // // TString output_file = "./trees_source_2e_application/bi214.root";
   // // TString output_file = "./trees_topo_cuts_2e_application/bi214.root";
+  // TString output_file = "./source/application_odd/bi214.root";
 
-  TString input_file = "./raw_trees/radon/merge.root";
-  TString output_file = "./trees_source_2e_application/radon.root";
-  // TString output_file = "./trees_topo_cuts_2e_application/radon.root";
+  // TString input_file = "./raw_trees/radon/merge.root";
+  // // TString output_file = "./trees_source_2e_application/radon.root";
+  // // TString output_file = "./trees_topo_cuts_2e_application/radon.root";
+  // TString output_file = "./source/application_odd/radon.root";
 
   // TString input_file = "./raw_trees/2nu_full/merge.root";
   // TString output_file = "./trees_source_2e_application/2nu_full_1M.root";
@@ -49,7 +65,7 @@ void tree_cut_application() {
   double cut_vertex_location = 0;
   double cut_pint = 0.04;
   double cut_delta_y = 60;
-  double cut_delta_z = 70;
+  double cut_delta_z= 70;
 
   tree->SetBranchAddress("2e_electrons_vertex_location",&vertex_location);
   tree->SetBranchAddress("2e_electrons_internal_probability",&pint);
@@ -73,9 +89,9 @@ void tree_cut_application() {
     //source
     if (vertex_location==0) {
       ++count;
-      if (count >= n_training) {
+      if (count >= n_training && i%2==1) {
         ++count_application;
-        // if(Esum>2)
+        if(Esum>2)
           newtree->Fill();
       }
     }

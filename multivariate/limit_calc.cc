@@ -122,7 +122,7 @@ void calcLimit(TString outFile, TString inList, TString m){
   csLim.setAccuracy(0.001);
 
   //Toggle the number of pseudo-experiments used to find the limit 0 is lowest(fastest), 4 is highest(slowest)
-  csLim.setPrecision(1);
+  csLim.setPrecision(2);
 
   //Toggle expected/observed to speed things up if you wish
   csLim.calculateExpected(true);
@@ -133,7 +133,7 @@ void calcLimit(TString outFile, TString inList, TString m){
 
   //Start the cross section limit search at a cross section of 1.0 times the nominal input value
   //  Use this to shorten your calculation if you know roughly where the limit will be.
-  csLim.setSearchSeed(1.0);
+  csLim.setSearchSeed(4.3);
 
 
   // This class is used to test the fit used by the CLfit and CLfit2 classes
